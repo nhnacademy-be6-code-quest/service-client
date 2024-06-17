@@ -25,12 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req.requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/client/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/client/**").permitAll())
-                .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .formLogin(login -> login
-                        .usernameParameter("clientEmail")
-                        .passwordParameter("clientPassword")
-                        .successHandler(new LoginSuccessHandler()))
-                .oauth2Login(oauth-> oauth.successHandler(new LoginSuccessHandler()));
+                .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
         return http.build();
     }
 
