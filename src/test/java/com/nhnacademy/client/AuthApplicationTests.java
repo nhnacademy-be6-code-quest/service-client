@@ -1,4 +1,4 @@
-package com.nhnacademy.auth;
+package com.nhnacademy.client;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

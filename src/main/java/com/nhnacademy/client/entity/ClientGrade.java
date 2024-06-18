@@ -1,4 +1,4 @@
-package com.nhnacademy.auth.entity;
+package com.nhnacademy.client.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

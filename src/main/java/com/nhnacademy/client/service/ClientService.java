@@ -1,14 +1,17 @@
-package com.nhnacademy.auth.service;
+package com.nhnacademy.client.service;
 
-import com.nhnacademy.auth.dto.ClientRegisterRequestDto;
-import com.nhnacademy.auth.dto.ClientRegisterResponseDto;
-import com.nhnacademy.auth.entity.Client;
-import com.nhnacademy.auth.entity.ClientNumber;
-import com.nhnacademy.auth.entity.Role;
-import com.nhnacademy.auth.exception.ClientEmailDuplicatesException;
-import com.nhnacademy.auth.repository.ClientGradeRepository;
-import com.nhnacademy.auth.repository.ClientNumberRepository;
-import com.nhnacademy.auth.repository.ClientRepository;
+import com.nhnacademy.client.dto.ClientLoginRequestDto;
+import com.nhnacademy.client.dto.ClientLoginResponseDto;
+import com.nhnacademy.client.dto.ClientRegisterRequestDto;
+import com.nhnacademy.client.dto.ClientRegisterResponseDto;
+import com.nhnacademy.client.entity.Client;
+import com.nhnacademy.client.entity.ClientNumber;
+import com.nhnacademy.client.entity.Role;
+import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
+import com.nhnacademy.client.exception.NotFoundClientException;
+import com.nhnacademy.client.repository.ClientGradeRepository;
+import com.nhnacademy.client.repository.ClientNumberRepository;
+import com.nhnacademy.client.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,5 +49,18 @@ public class ClientService {
                 .build());
 
         return new ClientRegisterResponseDto(client.getClientEmail(), client.getClientCreatedAt());
+    }
+
+    public ClientLoginResponseDto login(ClientLoginRequestDto loginInfo) {
+        Client client = clientRepository.findByClientEmail(loginInfo.getClientEmail());
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + loginInfo.getClientEmail());
+        }
+        return ClientLoginResponseDto.builder()
+                .role(Role.ROLE_USER)
+                .clientEmail(client.getClientEmail())
+                .clientPassword(client.getClientPassword())
+                .clientName(client.getClientName())
+                .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.nhnacademy.auth.exception;
+package com.nhnacademy.client.exception;
 
 public class ClientEmailDuplicatesException extends RuntimeException {
     public ClientEmailDuplicatesException() {

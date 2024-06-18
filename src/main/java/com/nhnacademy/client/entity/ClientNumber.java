@@ -1,4 +1,4 @@
-package com.nhnacademy.auth.entity;
+package com.nhnacademy.client.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

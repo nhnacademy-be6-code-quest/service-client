@@ -1,7 +1,7 @@
-package com.nhnacademy.auth.entity;
+package com.nhnacademy.client.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nhnacademy.auth.exception.UnknownRoleException;
+import com.nhnacademy.client.exception.UnknownRoleException;
 import org.springframework.security.core.GrantedAuthority;
 
 public enum Role implements GrantedAuthority {

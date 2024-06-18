@@ -1,10 +1,9 @@
-package com.nhnacademy.auth.dto;
+package com.nhnacademy.client.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 public class ClientRegisterRequestDto {
