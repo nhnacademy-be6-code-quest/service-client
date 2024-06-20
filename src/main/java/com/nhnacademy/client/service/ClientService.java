@@ -1,6 +1,5 @@
 package com.nhnacademy.client.service;
 
-import com.nhnacademy.client.dto.ClientLoginRequestDto;
 import com.nhnacademy.client.dto.ClientLoginResponseDto;
 import com.nhnacademy.client.dto.ClientRegisterRequestDto;
 import com.nhnacademy.client.dto.ClientRegisterResponseDto;
@@ -35,9 +34,9 @@ public class ClientService {
                 .clientEmail(registerInfo.getClientEmail())
                 .clientPassword(passwordEncoder.encode(registerInfo.getClientPassword()))
                 .clientName(registerInfo.getClientName())
-                .clientBirth(registerInfo.getClientBirth())
+                .clientBirth(registerInfo.getClientBirth().atStartOfDay())
                 .clientCreatedAt(LocalDateTime.now())
-                .clientLoginAt(LocalDateTime.now())
+                .lastLoginDate(LocalDateTime.now())
                 .isDeleted(false)
                 .role(Role.ROLE_USER)
                 .clientGrade(clientGradeRepository.findByClientGradeName("common"))
@@ -51,10 +50,10 @@ public class ClientService {
         return new ClientRegisterResponseDto(client.getClientEmail(), client.getClientCreatedAt());
     }
 
-    public ClientLoginResponseDto login(ClientLoginRequestDto loginInfo) {
-        Client client = clientRepository.findByClientEmail(loginInfo.getClientEmail());
+    public ClientLoginResponseDto login(String email) {
+        Client client = clientRepository.findByClientEmail(email);
         if (client == null) {
-            throw new NotFoundClientException("Not found : " + loginInfo.getClientEmail());
+            throw new NotFoundClientException("Not found : " + email);
         }
         return ClientLoginResponseDto.builder()
                 .role(Role.ROLE_USER)

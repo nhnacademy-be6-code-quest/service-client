@@ -21,9 +21,10 @@ public class Client {
     private String clientEmail;
     private String clientPassword;
     private String clientName;
-    private LocalDate clientBirth;
+    private LocalDateTime clientBirth;
     private LocalDateTime clientCreatedAt;
-    private LocalDateTime clientLoginAt;
+    private LocalDateTime lastLoginDate;
     private boolean isDeleted;
+    @Column(name = "client_role_id")
     private Role role;
 }

@@ -1,6 +1,5 @@
 package com.nhnacademy.client.controller;
 
-import com.nhnacademy.client.dto.ClientLoginRequestDto;
 import com.nhnacademy.client.dto.ClientLoginResponseDto;
 import com.nhnacademy.client.dto.ClientRegisterRequestDto;
 import com.nhnacademy.client.dto.ClientRegisterResponseDto;
@@ -24,8 +23,8 @@ public class ClientController {
     }
 
     @GetMapping("/api/client/login")
-    public ResponseEntity<ClientLoginResponseDto> login(@RequestBody ClientLoginRequestDto clientLoginRequestDto) {
-        return ResponseEntity.ok(clientService.login(clientLoginRequestDto));
+    public ResponseEntity<ClientLoginResponseDto> login(@RequestParam String email) {
+        return ResponseEntity.ok(clientService.login(email));
     }
 
     @ExceptionHandler(ClientEmailDuplicatesException.class)
