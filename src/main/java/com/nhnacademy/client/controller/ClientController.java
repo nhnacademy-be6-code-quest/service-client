@@ -8,6 +8,7 @@ import com.nhnacademy.client.exception.NotFoundClientException;
 import com.nhnacademy.client.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,11 @@ public class ClientController {
     @GetMapping("/api/client/login")
     public ResponseEntity<ClientLoginResponseDto> login(@RequestParam String email) {
         return ResponseEntity.ok(clientService.login(email));
+    }
+
+    @GetMapping("/api/test")
+    public ResponseEntity<String> test(@RequestHeader HttpHeaders headers) {
+        return ResponseEntity.ok("success");
     }
 
     @ExceptionHandler(ClientEmailDuplicatesException.class)
