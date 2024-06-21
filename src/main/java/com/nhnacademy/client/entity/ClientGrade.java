@@ -1,4 +1,4 @@
-package com.nhnacademy.auth.entity;
+package com.nhnacademy.client.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +17,6 @@ public class ClientGrade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clientGradeId;
     private String clientGradeName;
-    private long clientPolicyBoundary;
+    private long clientPolicyBoundry;
     private Integer rate;
 }

@@ -1,7 +1,7 @@
-package com.nhnacademy.auth.repository;
+package com.nhnacademy.client.repository;
 
-import com.nhnacademy.auth.entity.Client;
-import com.nhnacademy.auth.entity.ClientNumber;
+import com.nhnacademy.client.entity.Client;
+import com.nhnacademy.client.entity.ClientNumber;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

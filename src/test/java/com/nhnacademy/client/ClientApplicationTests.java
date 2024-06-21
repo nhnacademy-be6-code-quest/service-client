@@ -1,10 +1,10 @@
-package com.nhnacademy.auth;
+package com.nhnacademy.client;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AuthApplicationTests {
+class ClientApplicationTests {
 
     @Test
     void contextLoads() {
