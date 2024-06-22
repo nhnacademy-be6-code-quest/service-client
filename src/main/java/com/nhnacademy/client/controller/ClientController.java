@@ -41,7 +41,7 @@ public class ClientController {
         return ResponseEntity.ok(clientService.privacy(httpHeaders.getFirst("email")));
     }
 
-    @GetMapping("/api/client")
+    @GetMapping("/api/client/coupon-payment")
     public ResponseEntity<Page<ClientCouponPaymentResponseDto>> getCouponPayments(
             @RequestParam(name = "page") int page,
             @RequestParam(name = "size") int size) {

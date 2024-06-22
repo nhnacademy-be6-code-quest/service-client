@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/client").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/api/client/coupon-payment").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/client/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/client/login").permitAll())
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
