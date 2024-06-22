@@ -1,4 +1,4 @@
-package com.nhnacademy.client.dto;
+package com.nhnacademy.client.dto.response;
 
 import com.nhnacademy.client.entity.Role;
 import lombok.AllArgsConstructor;

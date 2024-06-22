@@ -1,4 +1,4 @@
-package com.nhnacademy.client.dto;
+package com.nhnacademy.client.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
