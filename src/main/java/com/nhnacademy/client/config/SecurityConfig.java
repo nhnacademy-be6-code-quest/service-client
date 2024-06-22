@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/client").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/client").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/client/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/client/login").permitAll())
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))

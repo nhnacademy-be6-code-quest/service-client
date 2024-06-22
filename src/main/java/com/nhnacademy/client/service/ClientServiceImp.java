@@ -1,10 +1,7 @@
 package com.nhnacademy.client.service;
 
-import com.nhnacademy.client.dto.response.ClientDeliveryAddressDto;
-import com.nhnacademy.client.dto.response.ClientLoginResponseDto;
+import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
-import com.nhnacademy.client.dto.response.ClientPrivacyResponseDto;
-import com.nhnacademy.client.dto.response.ClientRegisterResponseDto;
 import com.nhnacademy.client.entity.Client;
 import com.nhnacademy.client.entity.ClientNumber;
 import com.nhnacademy.client.entity.Role;
@@ -15,6 +12,9 @@ import com.nhnacademy.client.repository.ClientGradeRepository;
 import com.nhnacademy.client.repository.ClientNumberRepository;
 import com.nhnacademy.client.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -93,5 +93,14 @@ public class ClientServiceImp implements ClientService {
                                 .build())
                         .toList())
                 .build();
+    }
+
+    @Override
+    public Page<ClientCouponPaymentResponseDto> couponPayment(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("clientId").descending());
+        return clientRepository.findAll(pageRequest).map(client -> ClientCouponPaymentResponseDto.builder()
+                .clientEmail(client.getClientEmail())
+                .clientName(client.getClientName())
+                .build());
     }
 }
