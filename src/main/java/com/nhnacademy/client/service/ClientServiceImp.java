@@ -99,6 +99,7 @@ public class ClientServiceImp implements ClientService {
     public Page<ClientCouponPaymentResponseDto> couponPayment(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("clientId").descending());
         return clientRepository.findAll(pageRequest).map(client -> ClientCouponPaymentResponseDto.builder()
+                .clientId(client.getClientId())
                 .clientEmail(client.getClientEmail())
                 .clientName(client.getClientName())
                 .build());

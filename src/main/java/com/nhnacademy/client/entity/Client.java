@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long client_id;
+    private Long clientId;
     @ManyToOne
     @JoinColumn(name = "clientGradeId")
     private ClientGrade clientGrade;
