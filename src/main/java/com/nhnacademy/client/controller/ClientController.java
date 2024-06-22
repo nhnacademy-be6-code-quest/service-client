@@ -1,18 +1,21 @@
 package com.nhnacademy.client.controller;
 
-import com.nhnacademy.client.dto.ClientLoginRequestDto;
-import com.nhnacademy.client.dto.ClientLoginResponseDto;
-import com.nhnacademy.client.dto.ClientRegisterRequestDto;
-import com.nhnacademy.client.dto.ClientRegisterResponseDto;
+import com.nhnacademy.client.dto.response.ClientLoginResponseDto;
+import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
+import com.nhnacademy.client.dto.response.ClientPrivacyResponseDto;
+import com.nhnacademy.client.dto.response.ClientRegisterResponseDto;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
 import com.nhnacademy.client.exception.NotFoundClientException;
 import com.nhnacademy.client.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ClientController {
@@ -20,12 +23,20 @@ public class ClientController {
 
     @PostMapping("/api/client")
     public ResponseEntity<ClientRegisterResponseDto> createClient(@Valid @RequestBody ClientRegisterRequestDto clientRegisterRequestDto) {
+        log.info("Create client : {}", clientRegisterRequestDto);
         return ResponseEntity.ok(clientService.register(clientRegisterRequestDto));
     }
 
     @GetMapping("/api/client/login")
-    public ResponseEntity<ClientLoginResponseDto> login(@RequestBody ClientLoginRequestDto clientLoginRequestDto) {
-        return ResponseEntity.ok(clientService.login(clientLoginRequestDto));
+    public ResponseEntity<ClientLoginResponseDto> login(@RequestParam String email) {
+        log.info("Login : {}", email);
+        return ResponseEntity.ok(clientService.login(email));
+    }
+
+    @GetMapping("/api/client")
+    public ResponseEntity<ClientPrivacyResponseDto> getPrivacy(@RequestHeader HttpHeaders httpHeaders) {
+        log.info("Get privacy : {}", httpHeaders);
+        return ResponseEntity.ok(clientService.privacy(httpHeaders.getFirst("email")));
     }
 
     @ExceptionHandler(ClientEmailDuplicatesException.class)
