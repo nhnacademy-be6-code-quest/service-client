@@ -1,10 +1,3 @@
-POST localhost:8001/client
-Content-Type: application/json
-
-{
-  "clientEmail" : "test@email.com",
-  "clientPassword" : "qwer1234@",
-  "clientName" : "tester",
-  "clientBirth" : "2024-06-16T00:00:00",
-  "clientPhoneNumber" : "01066666808"
-}
+GET localhost:8003/api/client/coupon-payment?page=0&size=5
+email: hi
+role: ROLE_ADMIN

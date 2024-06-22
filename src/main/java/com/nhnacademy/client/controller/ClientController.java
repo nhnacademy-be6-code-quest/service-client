@@ -1,5 +1,6 @@
 package com.nhnacademy.client.controller;
 
+import com.nhnacademy.client.dto.response.ClientCouponPaymentResponseDto;
 import com.nhnacademy.client.dto.response.ClientLoginResponseDto;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.dto.response.ClientPrivacyResponseDto;
@@ -10,6 +11,7 @@ import com.nhnacademy.client.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,13 @@ public class ClientController {
     public ResponseEntity<ClientPrivacyResponseDto> getPrivacy(@RequestHeader HttpHeaders httpHeaders) {
         log.info("Get privacy : {}", httpHeaders);
         return ResponseEntity.ok(clientService.privacy(httpHeaders.getFirst("email")));
+    }
+
+    @GetMapping("/api/client/coupon-payment")
+    public ResponseEntity<Page<ClientCouponPaymentResponseDto>> getCouponPayments(
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "size") int size) {
+        return ResponseEntity.ok(clientService.couponPayment(page, size));
     }
 
     @ExceptionHandler(ClientEmailDuplicatesException.class)
