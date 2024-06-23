@@ -53,6 +53,12 @@ public class ClientController {
         return ResponseEntity.ok(clientService.deliveryAddress(httpHeaders.getFirst("email")));
     }
 
+    @GetMapping("/api/client/order")
+    public ResponseEntity<ClientOrderResponseDto> getOrders(@RequestHeader HttpHeaders httpHeaders) {
+        log.info("Get orders : {}", httpHeaders);
+        return ResponseEntity.ok(clientService.order(httpHeaders.getFirst("email")));
+    }
+
     @ExceptionHandler(ClientEmailDuplicatesException.class)
     public ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e) {
         return new ResponseEntity<>(null, HttpStatus.CONFLICT);

@@ -12,4 +12,5 @@ public interface ClientService {
     ClientPrivacyResponseDto privacy(String email);
     Page<ClientCouponPaymentResponseDto> couponPayment(int page, int size);
     List<ClientDeliveryAddressResponseDto> deliveryAddress(String email);
+    ClientOrderResponseDto order(String email);
 }

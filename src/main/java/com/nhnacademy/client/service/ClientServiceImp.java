@@ -114,4 +114,27 @@ public class ClientServiceImp implements ClientService {
                         .build())
                 .toList();
     }
+
+    @Override
+    public ClientOrderResponseDto order(String email) {
+        Client client = clientRepository.findByClientEmail(email);
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + email);
+        }
+        return ClientOrderResponseDto.builder()
+                .clientId(client.getClientId())
+                .clientName(client.getClientName())
+                .clientNumbers(clientNumberRepository.findAllByClient(client).stream()
+                        .map(clientNumber -> clientNumber.getClientPhoneNumber())
+                        .toList())
+                .deliveryAddresses(clientDeliveryAddressRepository.findAllByClient(client).stream()
+                        .map(address -> ClientDeliveryAddressResponseDto.builder()
+                                .clientDeliveryZipCode(address.getClientDeliveryZipCode())
+                                .clientDeliveryAddress(address.getClientDeliveryAddress())
+                                .clientDeliveryAddressDetail(address.getClientDeliveryAddressDetail())
+                                .clientDeliveryAddressNickname(address.getClientDeliveryAddressNickname())
+                                .build())
+                        .toList())
+                .build();
+    }
 }
