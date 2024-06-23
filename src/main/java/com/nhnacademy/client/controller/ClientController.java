@@ -1,10 +1,7 @@
 package com.nhnacademy.client.controller;
 
-import com.nhnacademy.client.dto.response.ClientCouponPaymentResponseDto;
-import com.nhnacademy.client.dto.response.ClientLoginResponseDto;
+import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
-import com.nhnacademy.client.dto.response.ClientPrivacyResponseDto;
-import com.nhnacademy.client.dto.response.ClientRegisterResponseDto;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
 import com.nhnacademy.client.exception.NotFoundClientException;
 import com.nhnacademy.client.service.ClientService;
@@ -16,6 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -46,6 +45,12 @@ public class ClientController {
             @RequestParam(name = "page") int page,
             @RequestParam(name = "size") int size) {
         return ResponseEntity.ok(clientService.couponPayment(page, size));
+    }
+
+    @GetMapping("/api/client/address")
+    public ResponseEntity<List<ClientDeliveryAddressResponseDto>> getDeliveryAddresses(@RequestHeader HttpHeaders httpHeaders) {
+        log.info("Get delivery addresses : {}", httpHeaders);
+        return ResponseEntity.ok(clientService.deliveryAddress(httpHeaders.getFirst("email")));
     }
 
     @ExceptionHandler(ClientEmailDuplicatesException.class)
