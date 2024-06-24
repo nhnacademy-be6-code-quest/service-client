@@ -25,6 +25,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new EmailHeaderFilter("/api/client", "GET"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new EmailHeaderFilter("/api/client/address", "GET"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new EmailHeaderFilter("/api/client/address", "POST"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new EmailHeaderFilter("/api/client/address", "DELETE"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new EmailHeaderFilter("/api/client/order", "GET"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new RoleHeaderFilter("/api/client/coupon-payment", "GET", "ROLE_ADMIN"), UsernamePasswordAuthenticationFilter.class);
 

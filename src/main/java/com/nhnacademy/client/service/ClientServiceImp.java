@@ -1,8 +1,10 @@
 package com.nhnacademy.client.service;
 
+import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.entity.Client;
+import com.nhnacademy.client.entity.ClientDeliveryAddress;
 import com.nhnacademy.client.entity.ClientNumber;
 import com.nhnacademy.client.entity.Role;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
@@ -107,6 +109,7 @@ public class ClientServiceImp implements ClientService {
 
         return clientDeliveryAddressRepository.findAllByClient(client).stream()
                 .map(address -> ClientDeliveryAddressResponseDto.builder()
+                        .clientDeliveryAddressId(address.getClientDeliveryAddressId())
                         .clientDeliveryZipCode(address.getClientDeliveryZipCode())
                         .clientDeliveryAddress(address.getClientDeliveryAddress())
                         .clientDeliveryAddressDetail(address.getClientDeliveryAddressDetail())
@@ -137,5 +140,27 @@ public class ClientServiceImp implements ClientService {
                                 .build())
                         .toList())
                 .build();
+    }
+
+    @Override
+    public String registerAddress(ClientRegisterAddressRequestDto clientRegisterAddressDto, String email) {
+        Client client = clientRepository.findByClientEmail(email);
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + email);
+        }
+        clientDeliveryAddressRepository.save(ClientDeliveryAddress.builder()
+                        .client(client)
+                        .clientDeliveryZipCode(clientRegisterAddressDto.getClientDeliveryZipCode())
+                        .clientDeliveryAddressNickname(clientRegisterAddressDto.getClientDeliveryAddressNickname())
+                        .clientDeliveryAddress(clientRegisterAddressDto.getClientDeliveryAddress())
+                        .clientDeliveryAddressDetail(clientRegisterAddressDto.getClientDeliveryAddressDetail())
+                .build());
+        return "Success";
+    }
+
+    @Override
+    public String deleteAddress(Long addressId) {
+        clientDeliveryAddressRepository.deleteById(addressId);
+        return "Success";
     }
 }
