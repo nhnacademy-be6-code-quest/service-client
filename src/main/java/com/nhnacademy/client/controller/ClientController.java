@@ -1,5 +1,6 @@
 package com.nhnacademy.client.controller;
 
+import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
@@ -57,6 +58,21 @@ public class ClientController {
     public ResponseEntity<ClientOrderResponseDto> getOrders(@RequestHeader HttpHeaders httpHeaders) {
         log.info("Get orders : {}", httpHeaders);
         return ResponseEntity.ok(clientService.order(httpHeaders.getFirst("email")));
+    }
+
+    @PostMapping("/api/client/address")
+    public ResponseEntity<String> registerAddress(
+            @RequestHeader HttpHeaders httpHeaders,
+            @RequestBody ClientRegisterAddressRequestDto clientRegisterAddressDto
+            ) {
+        log.info("Register address : {}", clientRegisterAddressDto);
+        return ResponseEntity.ok(clientService.registerAddress(clientRegisterAddressDto, httpHeaders.getFirst("email")));
+    }
+
+    @DeleteMapping("/api/client/address")
+    public ResponseEntity<String> deleteAddress(@RequestParam Long addressId) {
+        log.info("Delete address");
+        return ResponseEntity.ok(clientService.deleteAddress(addressId));
     }
 
     @ExceptionHandler(ClientEmailDuplicatesException.class)
