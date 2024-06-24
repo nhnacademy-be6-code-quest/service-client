@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -84,14 +85,6 @@ public class ClientServiceImp implements ClientService {
                 .clientNumbers(clientNumberRepository.findAllByClient(client).stream()
                         .map(clientNumber -> clientNumber.getClientPhoneNumber())
                         .toList())
-                .clientDeliveryAddresses(clientDeliveryAddressRepository.findAllByClient(client).stream()
-                        .map(address -> ClientDeliveryAddressDto.builder()
-                                .clientDeliveryZipCode(address.getClientDeliveryZipCode())
-                                .clientDeliveryAddress(address.getClientDeliveryAddress())
-                                .clientDeliveryAddressDetail(address.getClientDeliveryAddressDetail())
-                                .clientDeliveryAddressNickname(address.getClientDeliveryAddressNickname())
-                                .build())
-                        .toList())
                 .build();
     }
 
@@ -103,5 +96,45 @@ public class ClientServiceImp implements ClientService {
                 .clientEmail(client.getClientEmail())
                 .clientName(client.getClientName())
                 .build());
+    }
+
+    @Override
+    public List<ClientDeliveryAddressResponseDto> deliveryAddress(String email) {
+        Client client = clientRepository.findByClientEmail(email);
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + email);
+        }
+
+        return clientDeliveryAddressRepository.findAllByClient(client).stream()
+                .map(address -> ClientDeliveryAddressResponseDto.builder()
+                        .clientDeliveryZipCode(address.getClientDeliveryZipCode())
+                        .clientDeliveryAddress(address.getClientDeliveryAddress())
+                        .clientDeliveryAddressDetail(address.getClientDeliveryAddressDetail())
+                        .clientDeliveryAddressNickname(address.getClientDeliveryAddressNickname())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public ClientOrderResponseDto order(String email) {
+        Client client = clientRepository.findByClientEmail(email);
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + email);
+        }
+        return ClientOrderResponseDto.builder()
+                .clientId(client.getClientId())
+                .clientName(client.getClientName())
+                .clientNumbers(clientNumberRepository.findAllByClient(client).stream()
+                        .map(clientNumber -> clientNumber.getClientPhoneNumber())
+                        .toList())
+                .deliveryAddresses(clientDeliveryAddressRepository.findAllByClient(client).stream()
+                        .map(address -> ClientDeliveryAddressResponseDto.builder()
+                                .clientDeliveryZipCode(address.getClientDeliveryZipCode())
+                                .clientDeliveryAddress(address.getClientDeliveryAddress())
+                                .clientDeliveryAddressDetail(address.getClientDeliveryAddressDetail())
+                                .clientDeliveryAddressNickname(address.getClientDeliveryAddressNickname())
+                                .build())
+                        .toList())
+                .build();
     }
 }

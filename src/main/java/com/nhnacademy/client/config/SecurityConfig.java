@@ -24,6 +24,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new EmailHeaderFilter("/api/client", "GET"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new EmailHeaderFilter("/api/client/address", "GET"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new EmailHeaderFilter("/api/client/order", "GET"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new RoleHeaderFilter("/api/client/coupon-payment", "GET", "ROLE_ADMIN"), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
