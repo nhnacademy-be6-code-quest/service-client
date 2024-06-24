@@ -129,6 +129,7 @@ public class ClientServiceImp implements ClientService {
                         .toList())
                 .deliveryAddresses(clientDeliveryAddressRepository.findAllByClient(client).stream()
                         .map(address -> ClientDeliveryAddressResponseDto.builder()
+                                .clientDeliveryAddressId(address.getClientDeliveryAddressId())
                                 .clientDeliveryZipCode(address.getClientDeliveryZipCode())
                                 .clientDeliveryAddress(address.getClientDeliveryAddress())
                                 .clientDeliveryAddressDetail(address.getClientDeliveryAddressDetail())

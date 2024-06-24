@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ClientDeliveryAddressResponseDto {
+    private Long clientDeliveryAddressId;
     private String clientDeliveryAddress;
     private String clientDeliveryAddressDetail;
     private String clientDeliveryAddressNickname;
