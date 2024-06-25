@@ -142,7 +142,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public String registerAddress(ClientRegisterAddressRequestDto clientRegisterAddressDto, String email) {
         Client client = clientRepository.findByClientEmail(email);
-        if (client == null || !client.isDeleted()) {
+        if (client == null || client.isDeleted()) {
             throw new NotFoundClientException("Not found : " + email);
         }
         clientDeliveryAddressRepository.save(ClientDeliveryAddress.builder()
