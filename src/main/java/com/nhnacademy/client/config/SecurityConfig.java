@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new EmailHeaderFilter("/api/client", "GET"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new EmailHeaderFilter("/api/client", "DELETE"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new EmailHeaderFilter("/api/client/address", "GET"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new EmailHeaderFilter("/api/client/address", "POST"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new EmailHeaderFilter("/api/client/address", "DELETE"), UsernamePasswordAuthenticationFilter.class)

@@ -7,6 +7,7 @@ import com.nhnacademy.client.entity.Client;
 import com.nhnacademy.client.entity.ClientDeliveryAddress;
 import com.nhnacademy.client.entity.ClientNumber;
 import com.nhnacademy.client.entity.Role;
+import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
 import com.nhnacademy.client.exception.NotFoundClientException;
 import com.nhnacademy.client.repository.ClientDeliveryAddressRepository;
@@ -37,7 +38,6 @@ public class ClientServiceImp implements ClientService {
         if (clientRepository.findByClientEmail(registerInfo.getClientEmail()) != null) {
             throw new ClientEmailDuplicatesException();
         }
-
         Client client = clientRepository.save(Client.builder()
                 .clientEmail(registerInfo.getClientEmail())
                 .clientPassword(passwordEncoder.encode(registerInfo.getClientPassword()))
@@ -54,14 +54,13 @@ public class ClientServiceImp implements ClientService {
                 .client(client)
                 .clientPhoneNumber(registerInfo.getClientPhoneNumber())
                 .build());
-
         return new ClientRegisterResponseDto(client.getClientEmail(), client.getClientCreatedAt());
     }
 
     @Override
     public ClientLoginResponseDto login(String email) {
         Client client = clientRepository.findByClientEmail(email);
-        if (client == null) {
+        if (client == null || client.isDeleted()) {
             throw new NotFoundClientException("Not found : " + email);
         }
         return ClientLoginResponseDto.builder()
@@ -75,17 +74,16 @@ public class ClientServiceImp implements ClientService {
     @Override
     public ClientPrivacyResponseDto privacy(String email) {
         Client client = clientRepository.findByClientEmail(email);
-        if (client == null) {
+        if (client == null || client.isDeleted()) {
             throw new NotFoundClientException("Not found : " + email);
         }
-
         return ClientPrivacyResponseDto.builder()
                 .clientEmail(client.getClientEmail())
                 .clientName(client.getClientName())
                 .clientGrade(client.getClientGrade().getClientGradeName())
                 .clientBirth(client.getClientBirth())
                 .clientNumbers(clientNumberRepository.findAllByClient(client).stream()
-                        .map(clientNumber -> clientNumber.getClientPhoneNumber())
+                        .map(ClientNumber::getClientPhoneNumber)
                         .toList())
                 .build();
     }
@@ -103,10 +101,9 @@ public class ClientServiceImp implements ClientService {
     @Override
     public List<ClientDeliveryAddressResponseDto> deliveryAddress(String email) {
         Client client = clientRepository.findByClientEmail(email);
-        if (client == null) {
+        if (client == null || client.isDeleted()) {
             throw new NotFoundClientException("Not found : " + email);
         }
-
         return clientDeliveryAddressRepository.findAllByClient(client).stream()
                 .map(address -> ClientDeliveryAddressResponseDto.builder()
                         .clientDeliveryAddressId(address.getClientDeliveryAddressId())
@@ -121,14 +118,14 @@ public class ClientServiceImp implements ClientService {
     @Override
     public ClientOrderResponseDto order(String email) {
         Client client = clientRepository.findByClientEmail(email);
-        if (client == null) {
+        if (client == null || client.isDeleted()) {
             throw new NotFoundClientException("Not found : " + email);
         }
         return ClientOrderResponseDto.builder()
                 .clientId(client.getClientId())
                 .clientName(client.getClientName())
                 .clientNumbers(clientNumberRepository.findAllByClient(client).stream()
-                        .map(clientNumber -> clientNumber.getClientPhoneNumber())
+                        .map(ClientNumber::getClientPhoneNumber)
                         .toList())
                 .deliveryAddresses(clientDeliveryAddressRepository.findAllByClient(client).stream()
                         .map(address -> ClientDeliveryAddressResponseDto.builder()
@@ -145,7 +142,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public String registerAddress(ClientRegisterAddressRequestDto clientRegisterAddressDto, String email) {
         Client client = clientRepository.findByClientEmail(email);
-        if (client == null) {
+        if (client == null || !client.isDeleted()) {
             throw new NotFoundClientException("Not found : " + email);
         }
         clientDeliveryAddressRepository.save(ClientDeliveryAddress.builder()
@@ -161,6 +158,19 @@ public class ClientServiceImp implements ClientService {
     @Override
     public String deleteAddress(Long addressId) {
         clientDeliveryAddressRepository.deleteById(addressId);
+        return "Success";
+    }
+
+    @Override
+    public String deleteClient(String email, String password) {
+        Client client = clientRepository.findByClientEmail(email);
+        if (client == null || client.isDeleted()) {
+            throw new NotFoundClientException("Not found : " + email);
+        } else if (!passwordEncoder.matches(password, client.getClientPassword())) {
+            throw new ClientAuthenticationFailedException("Client password does not match");
+        }
+        client.setDeleted(true);
+        clientRepository.save(client);
         return "Success";
     }
 }

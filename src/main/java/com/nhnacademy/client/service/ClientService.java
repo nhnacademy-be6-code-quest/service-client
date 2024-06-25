@@ -8,12 +8,87 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface ClientService {
+    /**
+     * 회원 정보를 받아 회원가입을 수행하는 함수입니다.
+     *
+     * @author gihwanJang
+     * @param registerInfo 회원정보를 가지는 DTO
+     * @return 등록 성공시 회원가입 일시, 회원 이메일을 실패시 ClientEmailDupllicates 예외를 반환합니다..
+     */
     ClientRegisterResponseDto register(ClientRegisterRequestDto registerInfo);
+
+    /**
+     * 이메일을 받아 해당 유저의 로그인시 필요한 정보를 반환하는 함수입니다.
+     *
+     * @author gihwanJang
+     * @param email 유저를 식별하는 인자입니다.
+     * @return 이메일값을 가지는 유저가 존재한다면 해당 유저의 정보를, 존재하지 않을 시 NotFoundClient 예외를 반환합니다.
+     */
     ClientLoginResponseDto login(String email);
+
+    /**
+     * 마이페이지에서 개인정보를 불러올 시 사용되는 api 함수로 이메일을 받아 해당 유저의 개인정보를 반환하는 함수입니다. (권한 필요)
+     *
+     * @author gihwanJang
+     * @param email 유저를 식별하는 인자입니다.
+     * @return 이메일값을 가지는 유저가 존재한다면 유저의 개인정보를, 존재하지 않을 시 NotFoundClient 예외를 반환합니다.
+     */
     ClientPrivacyResponseDto privacy(String email);
+
+    /**
+     * 쿠폰 발급시 사용되는 api 함수로 페이지와, 한 페이지의 사이즈를 인자로 받아 모든 유저정보를 반환하는 함수입니다. (관리자 권한 필요)
+     *
+     * @author gihwanJang
+     * @param page 요구하는 페이지의 값입니다.
+     * @param size 한페이지 내의 보여질 정보의 갯수입니다.
+     * @return 해당하는 페이지의 유저정보 페이지를 반환합니다.
+     */
     Page<ClientCouponPaymentResponseDto> couponPayment(int page, int size);
+
+    /**
+     * 마이페이지에서 사용되는 api 함수 이메일을 받아 해당 유저의 배송지 리스트를 반환합니다. (권한 필요)
+     *
+     * @author gihwanJang
+     * @param email 유저를 식별하는 인자입니다.
+     * @return 해당하는 유저가 존재한다면 배숭지 리스트를, 존재하지 않는다면 NotFoundClient 예외를 반환합니다.
+     */
     List<ClientDeliveryAddressResponseDto> deliveryAddress(String email);
+
+    /**
+     * 주문시 사용되는 api 함수로 이메일을 받아 해당 유저의 정보 반환하는 함수입니다. (권한 필요)
+     *
+     * @author gihwanJang
+     * @param email 유저를 식별하는 인자입니다.
+     * @return 해당하는 유저가 존재한다면 유저 정보를, 존재하지 않는다면 NotFoundClient 예외를 반환합니다.
+     */
     ClientOrderResponseDto order(String email);
+
+    /**
+     * 마이페이지의 배송지 관리시 사용되는 api함수로 email과 배송지를 인자로 받아 해당 유저의 배송지로 등록하는 함수입니다.
+     *
+     * @author gihwanJang
+     * @param clientRegisterAddressDto 등록 할 주소의 정보입니다.
+     * @param email 유저를 식별하는 인자입니다.
+     * @return 해당하는 유저가 존재한다면 배송지 정보를, 존재하지 않는다면 NotFoundClient 예외를 반환합니다.
+     */
     String registerAddress(ClientRegisterAddressRequestDto clientRegisterAddressDto, String email);
+
+    /**
+     * 마이페이지의 배송지 관리시 사용되는 api함수로 배송지 아이디를 인지로 받아 해당 주소를 삭제하는 함수입니다.
+     *
+     * @author gihwanJang
+     * @param addressId 주소를 식별하는 인자입니다.
+     * @return 성공시 "Success" 실패시 NotFoundClient 예외
+     */
     String deleteAddress(Long addressId);
+
+    /**
+     *  이메일과 비밀번홀르 인자로 받아 해당하는 유저를 삭제하는 api 함수입니다.
+     *
+     * @author gihwanJang
+     * @param email 유저를 식별하는 인자입니다.
+     * @param password 삭제시 확인 수단으로 Header 인자
+     * @return 성공시 "Success" 실패시 NotFoundClient, ClientAuthenticationFailed 예외
+     */
+    String deleteClient(String email, String password);
 }
