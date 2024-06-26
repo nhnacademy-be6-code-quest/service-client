@@ -2,6 +2,7 @@ package com.nhnacademy.client.controller;
 
 import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
+import com.nhnacademy.client.dto.request.ClientUpdatePrivacyRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
@@ -111,6 +112,13 @@ public class ClientControllerImp implements ClientController {
     public ResponseEntity<String> deletePhoneNumber(@RequestParam(name = "phoneNumberId") Long phoneNumberId) {
         log.info("Delete phone number");
         return ResponseEntity.ok(clientService.deletePhoneNumber(phoneNumberId));
+    }
+
+    @Override
+    @PutMapping("/api/client")
+    public ResponseEntity<String> updateClient(HttpHeaders httpHeaders, ClientUpdatePrivacyRequestDto clientUpdatePrivacyRequestDto) {
+        log.info("Update client : {}", clientUpdatePrivacyRequestDto);
+        return ResponseEntity.ok(clientService.updateClient(Long.valueOf(httpHeaders.getFirst(ID_HEADER)), clientUpdatePrivacyRequestDto.getClientName(), clientUpdatePrivacyRequestDto.getClientBirth()));
     }
 
     @Override
