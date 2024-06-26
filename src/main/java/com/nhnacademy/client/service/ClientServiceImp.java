@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -202,6 +203,18 @@ public class ClientServiceImp implements ClientService {
             throw new ClientAuthenticationFailedException("Client password does not match");
         }
         client.setDeleted(true);
+        clientRepository.save(client);
+        return "Success";
+    }
+
+    @Override
+    public String updateClient(Long id, String name, LocalDate birth) {
+        Client client = clientRepository.findById(id).orElse(null);
+        if (client == null || client.isDeleted()) {
+            throw new NotFoundClientException("Not found : " + id);
+        }
+        client.setClientName(name);
+        client.setClientBirth(birth.atStartOfDay());
         clientRepository.save(client);
         return "Success";
     }

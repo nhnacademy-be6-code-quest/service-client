@@ -6,6 +6,7 @@ import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ClientService {
@@ -120,4 +121,15 @@ public interface ClientService {
      * @return 성공시 "Success" 실패시 NotFoundClient, ClientAuthenticationFailed 예외
      */
     String deleteClient(Long id, String password);
+
+    /**
+     * 이름과 생일을 인자로 받아 해당 유저를 업데이트 하는 api 함수입니다.
+     *
+     * @author gihwanJang
+     * @param id 유저를 식별하는 인자입니다.
+     * @param name 업데이트할 닉네임 입니다.
+     * @param birth 업데이트할 생일 입니다.
+     * @return 성공시 "Success" 실패시 NotFoundClient 예외
+     */
+    String updateClient(Long id, String name, LocalDate birth);
 }

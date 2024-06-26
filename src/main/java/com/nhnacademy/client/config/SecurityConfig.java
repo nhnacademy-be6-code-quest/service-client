@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new IdHeaderFilter("/api/client", "GET"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new IdHeaderFilter("/api/client", "DELETE"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new IdHeaderFilter("/api/client", "PUT"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new IdHeaderFilter("/api/client/address", "GET"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new IdHeaderFilter("/api/client/address", "POST"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new IdHeaderFilter("/api/client/address", "DELETE"), UsernamePasswordAuthenticationFilter.class)

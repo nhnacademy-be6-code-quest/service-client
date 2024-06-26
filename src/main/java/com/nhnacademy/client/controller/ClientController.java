@@ -3,6 +3,7 @@ package com.nhnacademy.client.controller;
 import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
+import com.nhnacademy.client.dto.request.ClientUpdatePrivacyRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
@@ -249,6 +250,27 @@ public interface ClientController {
             @Parameter(description = "연락처 id")
             @RequestParam(name = "phoneNumberId") Long phoneNumberId
     );
+
+    @Operation(
+            summary = "회원 업데이트",
+            description = "MyPage - 회원의 정보 업데이트",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공 여부 반환"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "검색된 유저가 없을 시 반환"
+                    )
+            }
+    )
+    ResponseEntity<String> updateClient(
+            @Parameter(description = "id 해더, password 해더")
+            @RequestHeader HttpHeaders httpHeaders,
+            @Parameter(description = "수정할 유저 개인정보")
+            @RequestBody ClientUpdatePrivacyRequestDto clientUpdatePrivacyRequestDto
+            );
 
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
 
