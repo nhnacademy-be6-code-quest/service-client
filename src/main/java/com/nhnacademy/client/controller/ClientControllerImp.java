@@ -1,6 +1,7 @@
 package com.nhnacademy.client.controller;
 
 import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
+import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
@@ -22,7 +23,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class ClientControllerImp implements ClientController {
-    private static final String EMAIL_HEADER = "email";
+    private static final String ID_HEADER = "X-User-Id";
     private static final String PASSWORD_HEADER = "password";
 
     private final ClientService clientService;
@@ -45,7 +46,7 @@ public class ClientControllerImp implements ClientController {
     @GetMapping("/api/client")
     public ResponseEntity<ClientPrivacyResponseDto> getPrivacy(@RequestHeader HttpHeaders httpHeaders) {
         log.info("Get privacy : {}", httpHeaders);
-        return ResponseEntity.ok(clientService.privacy(httpHeaders.getFirst(EMAIL_HEADER)));
+        return ResponseEntity.ok(clientService.privacy(Long.valueOf(httpHeaders.getFirst(ID_HEADER))));
     }
 
     @Override
@@ -60,21 +61,21 @@ public class ClientControllerImp implements ClientController {
     @GetMapping("/api/client/address")
     public ResponseEntity<List<ClientDeliveryAddressResponseDto>> getDeliveryAddresses(@RequestHeader HttpHeaders httpHeaders) {
         log.info("Get delivery addresses : {}", httpHeaders);
-        return ResponseEntity.ok(clientService.deliveryAddress(httpHeaders.getFirst(EMAIL_HEADER)));
+        return ResponseEntity.ok(clientService.deliveryAddress(Long.valueOf(httpHeaders.getFirst(ID_HEADER))));
     }
 
     @Override
     @GetMapping("/api/client/order")
     public ResponseEntity<ClientOrderResponseDto> getOrders(@RequestHeader HttpHeaders httpHeaders) {
         log.info("Get orders : {}", httpHeaders);
-        return ResponseEntity.ok(clientService.order(httpHeaders.getFirst(EMAIL_HEADER)));
+        return ResponseEntity.ok(clientService.order(Long.valueOf(httpHeaders.getFirst(ID_HEADER))));
     }
 
     @Override
     @PostMapping("/api/client/address")
     public ResponseEntity<String> registerAddress(@RequestHeader HttpHeaders httpHeaders, @RequestBody ClientRegisterAddressRequestDto clientRegisterAddressDto) {
         log.info("Register address : {}", clientRegisterAddressDto);
-        return ResponseEntity.ok(clientService.registerAddress(clientRegisterAddressDto, httpHeaders.getFirst(EMAIL_HEADER)));
+        return ResponseEntity.ok(clientService.registerAddress(clientRegisterAddressDto, Long.valueOf(httpHeaders.getFirst(ID_HEADER))));
     }
 
     @Override
@@ -84,10 +85,32 @@ public class ClientControllerImp implements ClientController {
         return ResponseEntity.ok(clientService.deleteAddress(addressId));
     }
 
+    @Override
     @DeleteMapping("/api/client")
     public ResponseEntity<String> deleteClient(@RequestHeader HttpHeaders httpHeaders) {
         log.info("Delete client");
-        return ResponseEntity.ok(clientService.deleteClient(httpHeaders.getFirst(EMAIL_HEADER), httpHeaders.getFirst(PASSWORD_HEADER)));
+        return ResponseEntity.ok(clientService.deleteClient(Long.valueOf(httpHeaders.getFirst(ID_HEADER)), httpHeaders.getFirst(PASSWORD_HEADER)));
+    }
+
+    @Override
+    @GetMapping("/api/client/phone")
+    public ResponseEntity<List<ClientPhoneNumberResponseDto>> getPhoneNumbers(@RequestHeader HttpHeaders httpHeaders) {
+        log.info("Get phone numbers");
+        return ResponseEntity.ok(clientService.getPhoneNumbers(Long.valueOf(httpHeaders.getFirst(ID_HEADER))));
+    }
+
+    @Override
+    @PostMapping("/api/client/phone")
+    public ResponseEntity<String> registerPhoneNumber(@RequestHeader HttpHeaders httpHeaders, ClientRegisterPhoneNumberRequestDto clientRegisterPhoneNumberDto) {
+        log.info("Register phone number : {}", clientRegisterPhoneNumberDto);
+        return ResponseEntity.ok(clientService.registerPhoneNumber(clientRegisterPhoneNumberDto, Long.valueOf(httpHeaders.getFirst(ID_HEADER))));
+    }
+
+    @Override
+    @DeleteMapping("/api/client/phone")
+    public ResponseEntity<String> deletePhoneNumber(@RequestParam(name = "phoneNumberId") Long phoneNumberId) {
+        log.info("Delete phone number");
+        return ResponseEntity.ok(clientService.deletePhoneNumber(phoneNumberId));
     }
 
     @Override

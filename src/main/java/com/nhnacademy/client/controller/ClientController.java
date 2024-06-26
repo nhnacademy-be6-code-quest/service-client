@@ -1,6 +1,7 @@
 package com.nhnacademy.client.controller;
 
 import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
+import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
@@ -73,7 +74,7 @@ public interface ClientController {
             }
     )
     ResponseEntity<ClientPrivacyResponseDto> getPrivacy(
-            @Parameter(description = "email 해더")
+            @Parameter(description = "id 해더")
             @RequestHeader HttpHeaders httpHeaders
     );
 
@@ -108,7 +109,7 @@ public interface ClientController {
             }
     )
     ResponseEntity<List<ClientDeliveryAddressResponseDto>> getDeliveryAddresses(
-            @Parameter(description = "email 해더")
+            @Parameter(description = "id 해더")
             @RequestHeader HttpHeaders httpHeaders
     );
 
@@ -127,7 +128,7 @@ public interface ClientController {
             }
     )
     ResponseEntity<ClientOrderResponseDto> getOrders(
-            @Parameter(description = "email 해더")
+            @Parameter(description = "id  해더")
             @RequestHeader HttpHeaders httpHeaders
     );
 
@@ -146,7 +147,7 @@ public interface ClientController {
             }
     )
     ResponseEntity<String> registerAddress(
-            @Parameter(description = "email 해더")
+            @Parameter(description = "id 해더")
             @RequestHeader HttpHeaders httpHeaders,
             @Parameter(description = "배송지 정보")
             @RequestBody ClientRegisterAddressRequestDto clientRegisterAddressDto
@@ -167,7 +168,7 @@ public interface ClientController {
             }
     )
     ResponseEntity<String> deleteAddress(
-            @Parameter(description = "email 해더")
+            @Parameter(description = "id 해더")
             @RequestParam Long addressId
     );
 
@@ -186,8 +187,67 @@ public interface ClientController {
             }
     )
     ResponseEntity<String> deleteClient(
-            @Parameter(description = "email 해더, password 해더")
+            @Parameter(description = "id 해더, password 해더")
             @RequestHeader HttpHeaders httpHeaders
+    );
+
+    @Operation(
+            summary = "회원 연락처 검색",
+            description = "MyPage - 회원의 연락처 조회",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "회원의 연락처 반환"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "검색된 유저가 없을 시 반환"
+                    )
+            }
+    )
+    ResponseEntity<List<ClientPhoneNumberResponseDto>> getPhoneNumbers(
+            @Parameter(description = "id 해더, password 해더")
+            @RequestHeader HttpHeaders httpHeaders
+    );
+
+    @Operation(
+            summary = "회원 연락처 추가",
+            description = "MyPage - 회원의 연락처 추가",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공 여부 반환"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "검색된 유저가 없을 시 반환"
+                    )
+            }
+    )
+    ResponseEntity<String> registerPhoneNumber(
+            @Parameter(description = "id 해더, password 해더")
+            @RequestHeader HttpHeaders httpHeaders,
+            @Parameter(description = "회원 전화번호 정보")
+            @RequestBody ClientRegisterPhoneNumberRequestDto clientRegisterPhoneNumberDto
+    );
+
+    @Operation(
+            summary = "회원 연락처 삭제",
+            description = "MyPage - 회원의 연락처 삭제",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공 여부 반환"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "검색된 유저가 없을 시 반환"
+                    )
+            }
+    )
+    ResponseEntity<String> deletePhoneNumber(
+            @Parameter(description = "연락처 id")
+            @RequestParam(name = "phoneNumberId") Long phoneNumberId
     );
 
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
