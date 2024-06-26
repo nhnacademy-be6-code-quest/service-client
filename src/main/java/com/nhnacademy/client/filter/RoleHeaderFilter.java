@@ -28,10 +28,15 @@ public class RoleHeaderFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("role filter start");
         if (pathMatcher.match(requiredPath, request.getRequestURI()) && request.getMethod().equalsIgnoreCase(requiredMethod)) {
-            String email = request.getHeader("email");
-            String role = request.getHeader("role");
+            try {
+                Long.valueOf(request.getHeader("X-User-Id"));
+            } catch ( NumberFormatException e ) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "id header is missing or invalid");
+                return;
+            }
 
-            if (email == null || email.isEmpty() || role == null || role.isEmpty() || !role.equals(requiredRole)) {
+            String role = request.getHeader("X-User-Role");
+            if (role == null || role.isEmpty() || !role.equals(requiredRole)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Role header is missing or invalid");
                 return;
             }

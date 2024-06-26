@@ -10,12 +10,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Slf4j
-public class EmailHeaderFilter extends OncePerRequestFilter {
+public class IdHeaderFilter extends OncePerRequestFilter {
     private final String requiredPath;
     private final String requiredMethod;
     private final AntPathMatcher pathMatcher;
 
-    public EmailHeaderFilter(String requiredPath, String requiredMethod) {
+    public IdHeaderFilter(String requiredPath, String requiredMethod) {
         this.requiredPath = requiredPath;
         this.requiredMethod = requiredMethod;
         this.pathMatcher = new AntPathMatcher();
@@ -25,14 +25,13 @@ public class EmailHeaderFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("header filter start");
         if (pathMatcher.match(requiredPath, request.getRequestURI()) && request.getMethod().equalsIgnoreCase(requiredMethod)) {
-            String email = request.getHeader("email");
-
-            if (email == null || email.isEmpty()) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Email header is missing or invalid");
+            try {
+                Long.valueOf(request.getHeader("X-User-Id"));
+            } catch ( NumberFormatException e ) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "id header is missing or invalid");
                 return;
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }

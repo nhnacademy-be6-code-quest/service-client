@@ -1,6 +1,7 @@
 package com.nhnacademy.client.service;
 
 import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
+import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.entity.Client;
@@ -65,6 +66,7 @@ public class ClientServiceImp implements ClientService {
         }
         return ClientLoginResponseDto.builder()
                 .role(Role.ROLE_USER)
+                .clientId(client.getClientId())
                 .clientEmail(client.getClientEmail())
                 .clientPassword(client.getClientPassword())
                 .clientName(client.getClientName())
@@ -72,19 +74,16 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
-    public ClientPrivacyResponseDto privacy(String email) {
-        Client client = clientRepository.findByClientEmail(email);
+    public ClientPrivacyResponseDto privacy(Long id) {
+        Client client = clientRepository.findById(id).orElse(null);
         if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException("Not found : " + id);
         }
         return ClientPrivacyResponseDto.builder()
                 .clientEmail(client.getClientEmail())
                 .clientName(client.getClientName())
                 .clientGrade(client.getClientGrade().getClientGradeName())
                 .clientBirth(client.getClientBirth())
-                .clientNumbers(clientNumberRepository.findAllByClient(client).stream()
-                        .map(ClientNumber::getClientPhoneNumber)
-                        .toList())
                 .build();
     }
 
@@ -99,10 +98,10 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
-    public List<ClientDeliveryAddressResponseDto> deliveryAddress(String email) {
-        Client client = clientRepository.findByClientEmail(email);
+    public List<ClientDeliveryAddressResponseDto> deliveryAddress(Long id) {
+        Client client = clientRepository.findById(id).orElse(null);
         if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException("Not found : " + id);
         }
         return clientDeliveryAddressRepository.findAllByClient(client).stream()
                 .map(address -> ClientDeliveryAddressResponseDto.builder()
@@ -116,10 +115,24 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
-    public ClientOrderResponseDto order(String email) {
-        Client client = clientRepository.findByClientEmail(email);
+    public List<ClientPhoneNumberResponseDto> getPhoneNumbers(Long id) {
+        Client client = clientRepository.findById(id).orElse(null);
         if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException("Not found : " + id);
+        }
+        return clientNumberRepository.findAllByClient(client).stream()
+                .map(number -> ClientPhoneNumberResponseDto.builder()
+                        .clientNumberId(number.getClientNumberId())
+                        .clientPhoneNumber(number.getClientPhoneNumber())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public ClientOrderResponseDto order(Long id) {
+        Client client = clientRepository.findById(id).orElse(null);
+        if (client == null || client.isDeleted()) {
+            throw new NotFoundClientException("Not found : " + id);
         }
         return ClientOrderResponseDto.builder()
                 .clientId(client.getClientId())
@@ -140,10 +153,10 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
-    public String registerAddress(ClientRegisterAddressRequestDto clientRegisterAddressDto, String email) {
-        Client client = clientRepository.findByClientEmail(email);
+    public String registerAddress(ClientRegisterAddressRequestDto clientRegisterAddressDto, Long id) {
+        Client client = clientRepository.findById(id).orElse(null);
         if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException("Not found : " + id);
         }
         clientDeliveryAddressRepository.save(ClientDeliveryAddress.builder()
                         .client(client)
@@ -156,16 +169,35 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
+    public String registerPhoneNumber(ClientRegisterPhoneNumberRequestDto clientPhoneNumberResponseDto, Long id) {
+        Client client = clientRepository.findById(id).orElse(null);
+        if (client == null || client.isDeleted()) {
+            throw new NotFoundClientException("Not found : " + id);
+        }
+        clientNumberRepository.save(ClientNumber.builder()
+                        .client(client)
+                        .clientPhoneNumber(clientPhoneNumberResponseDto.getPhoneNumber())
+                .build());
+        return "Success";
+    }
+
+    @Override
     public String deleteAddress(Long addressId) {
         clientDeliveryAddressRepository.deleteById(addressId);
         return "Success";
     }
 
     @Override
-    public String deleteClient(String email, String password) {
-        Client client = clientRepository.findByClientEmail(email);
+    public String deletePhoneNumber(Long phoneNumberId) {
+        clientNumberRepository.deleteById(phoneNumberId);
+        return "Success";
+    }
+
+    @Override
+    public String deleteClient(Long id, String password) {
+        Client client = clientRepository.findById(id).orElse(null);
         if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException("Not found : " + id);
         } else if (!passwordEncoder.matches(password, client.getClientPassword())) {
             throw new ClientAuthenticationFailedException("Client password does not match");
         }
