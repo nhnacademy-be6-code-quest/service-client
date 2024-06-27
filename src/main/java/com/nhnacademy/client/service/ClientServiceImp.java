@@ -1,5 +1,7 @@
 package com.nhnacademy.client.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.client.dto.message.ClientLoginMessageDto;
 import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
 import com.nhnacademy.client.dto.response.*;
@@ -11,17 +13,20 @@ import com.nhnacademy.client.entity.Role;
 import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
 import com.nhnacademy.client.exception.NotFoundClientException;
+import com.nhnacademy.client.exception.RabbitMessageConvertException;
 import com.nhnacademy.client.repository.ClientDeliveryAddressRepository;
 import com.nhnacademy.client.repository.ClientGradeRepository;
 import com.nhnacademy.client.repository.ClientNumberRepository;
 import com.nhnacademy.client.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +34,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ClientServiceImp implements ClientService {
+    private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final ClientRepository clientRepository;
     private final ClientGradeRepository clientGradeRepository;
@@ -217,5 +223,21 @@ public class ClientServiceImp implements ClientService {
         client.setClientBirth(birth.atStartOfDay());
         clientRepository.save(client);
         return "Success";
+    }
+
+    @RabbitListener(queues = "${rabbit.login.queue.name}")
+    public void receiveMessage(String message) {
+        ClientLoginMessageDto clientLoginMessageDto;
+        try {
+             clientLoginMessageDto = objectMapper.readValue(message , ClientLoginMessageDto.class);
+        } catch (IOException e) {
+            throw new RabbitMessageConvertException("Failed to convert message to ClientLoginMessageDto");
+        }
+        Client client = clientRepository.findById(clientLoginMessageDto.getClientId()).orElse(null);
+        if (client == null || client.isDeleted()) {
+            throw new NotFoundClientException("Not found : " + clientLoginMessageDto.getClientId());
+        }
+        client.setLastLoginDate(clientLoginMessageDto.getLastLoginDate());
+        clientRepository.save(client);
     }
 }

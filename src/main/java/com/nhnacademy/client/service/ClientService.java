@@ -132,4 +132,6 @@ public interface ClientService {
      * @return 성공시 "Success" 실패시 NotFoundClient 예외
      */
     String updateClient(Long id, String name, LocalDate birth);
+
+    
 }
