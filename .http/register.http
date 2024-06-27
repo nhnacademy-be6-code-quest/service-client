@@ -1,9 +1,9 @@
 ### 쿠폰
 GET localhost:8003/api/client/coupon-payment?page=0&size=5
-email: hi
-role: ROLE_ADMIN
+X-User-Id:1
+X-User-Role:ROLE_ADMIN
 
 ### 주문
 GET localhost:8003/api/client/order
 email: test@email.com
-role: ROLE_USEr
+role: ROLE_USER
