@@ -21,7 +21,7 @@ public class Client {
     private String clientEmail;
     private String clientPassword;
     private String clientName;
-    private LocalDateTime clientBirth;
+    private LocalDate clientBirth;
     private LocalDateTime clientCreatedAt;
     private LocalDateTime lastLoginDate;
     private boolean isDeleted;

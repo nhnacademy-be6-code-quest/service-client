@@ -50,7 +50,7 @@ public class ClientServiceImp implements ClientService {
                 .clientEmail(registerInfo.getClientEmail())
                 .clientPassword(passwordEncoder.encode(registerInfo.getClientPassword()))
                 .clientName(registerInfo.getClientName())
-                .clientBirth(registerInfo.getClientBirth().atStartOfDay())
+                .clientBirth(registerInfo.getClientBirth())
                 .clientCreatedAt(LocalDateTime.now())
                 .lastLoginDate(LocalDateTime.now())
                 .isDeleted(false)
@@ -220,7 +220,7 @@ public class ClientServiceImp implements ClientService {
             throw new NotFoundClientException("Not found : " + id);
         }
         client.setClientName(name);
-        client.setClientBirth(birth.atStartOfDay());
+        client.setClientBirth(birth);
         clientRepository.save(client);
         return "Success";
     }
