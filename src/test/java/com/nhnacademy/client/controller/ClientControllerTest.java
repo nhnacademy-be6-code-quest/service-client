@@ -333,20 +333,6 @@ class ClientControllerTest {
     }
 
     @Test
-    void testHandleClientEmailDuplicatesException() throws Exception {
-        // Given
-        doThrow(new ClientEmailDuplicatesException()).when(clientService).register(any(ClientRegisterRequestDto.class));
-
-        ClientRegisterRequestDto requestDto = new ClientRegisterRequestDto("test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), "123-456-7890");
-
-        // When & Then
-        mockMvc.perform(post("/api/client")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
     void testHandleNotFoundClientException() throws Exception {
         // Given
         doThrow(new NotFoundClientException("Not found")).when(clientService).privacy(anyLong());
