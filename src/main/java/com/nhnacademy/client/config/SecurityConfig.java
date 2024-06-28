@@ -1,7 +1,6 @@
 package com.nhnacademy.client.config;
 
-import com.nhnacademy.client.filter.IdHeaderFilter;
-import com.nhnacademy.client.filter.RoleHeaderFilter;
+import com.nhnacademy.client.filter.HeaderFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,17 +22,17 @@ public class SecurityConfig {
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(req -> req.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new IdHeaderFilter("/api/client", "GET"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IdHeaderFilter("/api/client", "DELETE"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IdHeaderFilter("/api/client", "PUT"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IdHeaderFilter("/api/client/address", "GET"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IdHeaderFilter("/api/client/address", "POST"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IdHeaderFilter("/api/client/address", "DELETE"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IdHeaderFilter("/api/client/phone", "GET"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IdHeaderFilter("/api/client/phone", "POST"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IdHeaderFilter("/api/client/phone", "DELETE"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IdHeaderFilter("/api/client/order", "GET"), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new RoleHeaderFilter("/api/client/coupon-payment", "GET", "ROLE_ADMIN"), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new HeaderFilter("/api/client", "GET"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client", "DELETE"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client", "PUT"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client/address", "GET"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client/address", "POST"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client/address", "DELETE"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client/phone", "GET"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client/phone", "POST"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client/phone", "DELETE"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client/order", "GET"), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter("/api/client/coupon-payment", "GET", "ROLE_ADMIN"), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

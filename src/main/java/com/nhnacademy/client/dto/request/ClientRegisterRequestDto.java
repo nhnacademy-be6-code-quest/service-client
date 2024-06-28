@@ -1,11 +1,13 @@
 package com.nhnacademy.client.dto.request;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
 
 @Getter
+@AllArgsConstructor
 public class ClientRegisterRequestDto {
     @NotNull
     @Email(message = "이메일 형식이 아닙니다.")
