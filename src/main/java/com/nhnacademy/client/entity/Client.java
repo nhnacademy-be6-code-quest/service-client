@@ -25,6 +25,5 @@ public class Client {
     private LocalDateTime clientCreatedAt;
     private LocalDateTime lastLoginDate;
     private boolean isDeleted;
-    @Column(name = "clientRoleId")
-    private Role role;
+    private LocalDateTime clientDeleteDate;
 }

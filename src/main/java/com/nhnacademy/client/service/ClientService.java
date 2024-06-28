@@ -133,5 +133,10 @@ public interface ClientService {
      */
     String updateClient(Long id, String name, LocalDate birth);
 
-    
+    /**
+     * 로그인 시간을 업데이트하는 함수입니다.
+     *
+     * @param message 유저의 id와 로그인 시간입니다.
+     */
+    void receiveMessage(String message);
 }

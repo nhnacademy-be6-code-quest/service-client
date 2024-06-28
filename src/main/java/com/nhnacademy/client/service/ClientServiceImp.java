@@ -6,18 +6,12 @@ import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
-import com.nhnacademy.client.entity.Client;
-import com.nhnacademy.client.entity.ClientDeliveryAddress;
-import com.nhnacademy.client.entity.ClientNumber;
-import com.nhnacademy.client.entity.Role;
+import com.nhnacademy.client.entity.*;
 import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
 import com.nhnacademy.client.exception.NotFoundClientException;
 import com.nhnacademy.client.exception.RabbitMessageConvertException;
-import com.nhnacademy.client.repository.ClientDeliveryAddressRepository;
-import com.nhnacademy.client.repository.ClientGradeRepository;
-import com.nhnacademy.client.repository.ClientNumberRepository;
-import com.nhnacademy.client.repository.ClientRepository;
+import com.nhnacademy.client.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.domain.Page;
@@ -35,8 +29,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClientServiceImp implements ClientService {
     private final ObjectMapper objectMapper;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final ClientRepository clientRepository;
+    private final ClientRoleRepository clientRoleRepository;
     private final ClientGradeRepository clientGradeRepository;
     private final ClientNumberRepository clientNumberRepository;
     private final ClientDeliveryAddressRepository clientDeliveryAddressRepository;
@@ -54,13 +50,17 @@ public class ClientServiceImp implements ClientService {
                 .clientCreatedAt(LocalDateTime.now())
                 .lastLoginDate(LocalDateTime.now())
                 .isDeleted(false)
-                .role(Role.ROLE_USER)
                 .clientGrade(clientGradeRepository.findByClientGradeName("common"))
                 .build());
 
         clientNumberRepository.save(ClientNumber.builder()
                 .client(client)
                 .clientPhoneNumber(registerInfo.getClientPhoneNumber())
+                .build());
+
+        clientRoleRepository.save(ClientRole.builder()
+                        .client(client)
+                        .role(roleRepository.findByRoleName("ROLE_USER"))
                 .build());
         return new ClientRegisterResponseDto(client.getClientEmail(), client.getClientCreatedAt());
     }
@@ -72,7 +72,9 @@ public class ClientServiceImp implements ClientService {
             throw new NotFoundClientException("Not found : " + email);
         }
         return ClientLoginResponseDto.builder()
-                .role(Role.ROLE_USER)
+                .role(clientRoleRepository.findRolesByClient(client).stream()
+                        .map(Role::getRoleName)
+                        .toList())
                 .clientId(client.getClientId())
                 .clientEmail(client.getClientEmail())
                 .clientPassword(client.getClientPassword())
@@ -209,6 +211,7 @@ public class ClientServiceImp implements ClientService {
             throw new ClientAuthenticationFailedException("Client password does not match");
         }
         client.setDeleted(true);
+        client.setClientDeleteDate(LocalDateTime.now());
         clientRepository.save(client);
         return "Success";
     }
@@ -225,6 +228,7 @@ public class ClientServiceImp implements ClientService {
         return "Success";
     }
 
+    @Override
     @RabbitListener(queues = "${rabbit.login.queue.name}")
     public void receiveMessage(String message) {
         ClientLoginMessageDto clientLoginMessageDto;

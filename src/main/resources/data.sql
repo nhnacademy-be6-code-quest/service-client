@@ -1,8 +1,9 @@
-INSERT INTO CLIENT_GRADE (`CLIENT_GRADE_NAME`, `CLIENT_POLICY_BOUNDARY`, `RATE`)
+INSERT INTO client_grade (`client_grade_name`, `client_policy_boundry`, `rate`)
 VALUES ('common', 0, 1),
        ('royal', 100000, 2),
        ('gold', 200000, 3),
        ('platinum', 300000, 4);
 
-INSERT INTO `role` (`client_role_name`)
-VALUES (ROLE_ADMIN, ROLE_USER, NON_USER)
+INSERT INTO `role` (`role_name`)
+VALUES ('ROLE_ADMIN'),
+       ('ROLE_USER');
