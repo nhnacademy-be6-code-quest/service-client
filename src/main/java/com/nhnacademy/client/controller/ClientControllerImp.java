@@ -1,10 +1,7 @@
 package com.nhnacademy.client.controller;
 
-import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
-import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
-import com.nhnacademy.client.dto.request.ClientUpdatePrivacyRequestDto;
+import com.nhnacademy.client.dto.request.*;
 import com.nhnacademy.client.dto.response.*;
-import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
 import com.nhnacademy.client.exception.NotFoundClientException;
@@ -35,6 +32,13 @@ public class ClientControllerImp implements ClientController {
     public ResponseEntity<ClientRegisterResponseDto> createClient(@Valid @RequestBody ClientRegisterRequestDto clientRegisterRequestDto) {
         log.info("Create client : {}", clientRegisterRequestDto);
         return ResponseEntity.ok(clientService.register(clientRegisterRequestDto));
+    }
+
+    @Override
+    @PostMapping("/api/oauth/client")
+    public ResponseEntity<String> createOauthClient(@RequestBody ClientOAuthRegisterRequestDto clientOAuthRegisterRequestDto) {
+        log.info("Create OAuth client : {}", clientOAuthRegisterRequestDto);
+        return ResponseEntity.ok(clientService.oauthRegister(clientOAuthRegisterRequestDto));
     }
 
     @Override

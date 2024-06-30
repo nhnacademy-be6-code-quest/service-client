@@ -1,9 +1,6 @@
 package com.nhnacademy.client.controller;
 
-import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
-import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
-import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
-import com.nhnacademy.client.dto.request.ClientUpdatePrivacyRequestDto;
+import com.nhnacademy.client.dto.request.*;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
 import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
@@ -43,6 +40,19 @@ public interface ClientController {
     );
 
     @Operation(
+            summary = "OAuth 회원가입",
+            description = "OAuth - OAuth 사용자를 등록",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공 여부 반환"
+                    ),
+            }
+    )
+    @PostMapping("/api/oauth/client")
+    ResponseEntity<String> createOauthClient(@RequestBody ClientOAuthRegisterRequestDto clientOAuthRegisterRequestDto);
+
+    @Operation(
             summary = "로그인 유저 조회",
             description = "Auth - 로그인을 시도한 사용자를 검색",
             responses = {
@@ -56,6 +66,7 @@ public interface ClientController {
                     )
             }
     )
+    @GetMapping("/api/client/login")
     ResponseEntity<ClientLoginResponseDto> login(
             @Parameter(description = "회원가입을 시도한 유저의 정보")
             @RequestParam String email);
@@ -74,6 +85,7 @@ public interface ClientController {
                     )
             }
     )
+    @GetMapping("/api/client")
     ResponseEntity<ClientPrivacyResponseDto> getPrivacy(
             @Parameter(description = "id 해더")
             @RequestHeader HttpHeaders httpHeaders
@@ -89,6 +101,7 @@ public interface ClientController {
                     ),
             }
     )
+    @GetMapping("/api/client/coupon-payment")
     ResponseEntity<Page<ClientCouponPaymentResponseDto>> getCouponPayments(
             @Parameter(description = "페이지")
             @RequestParam(name = "page") int page,
@@ -109,6 +122,7 @@ public interface ClientController {
                     )
             }
     )
+    @GetMapping("/api/client/address")
     ResponseEntity<List<ClientDeliveryAddressResponseDto>> getDeliveryAddresses(
             @Parameter(description = "id 해더")
             @RequestHeader HttpHeaders httpHeaders
@@ -128,6 +142,7 @@ public interface ClientController {
                     )
             }
     )
+    @GetMapping("/api/client/order")
     ResponseEntity<ClientOrderResponseDto> getOrders(
             @Parameter(description = "id  해더")
             @RequestHeader HttpHeaders httpHeaders
@@ -147,6 +162,7 @@ public interface ClientController {
                     )
             }
     )
+    @PostMapping("/api/client/address")
     ResponseEntity<String> registerAddress(
             @Parameter(description = "id 해더")
             @RequestHeader HttpHeaders httpHeaders,
@@ -168,6 +184,7 @@ public interface ClientController {
                     )
             }
     )
+    @DeleteMapping("/api/client/address")
     ResponseEntity<String> deleteAddress(
             @Parameter(description = "id 해더")
             @RequestParam Long addressId
@@ -187,6 +204,7 @@ public interface ClientController {
                     )
             }
     )
+    @DeleteMapping("/api/client")
     ResponseEntity<String> deleteClient(
             @Parameter(description = "id 해더, password 해더")
             @RequestHeader HttpHeaders httpHeaders
@@ -206,6 +224,7 @@ public interface ClientController {
                     )
             }
     )
+    @GetMapping("/api/client/phone")
     ResponseEntity<List<ClientPhoneNumberResponseDto>> getPhoneNumbers(
             @Parameter(description = "id 해더, password 해더")
             @RequestHeader HttpHeaders httpHeaders
@@ -225,6 +244,7 @@ public interface ClientController {
                     )
             }
     )
+    @PostMapping("/api/client/phone")
     ResponseEntity<String> registerPhoneNumber(
             @Parameter(description = "id 해더, password 해더")
             @RequestHeader HttpHeaders httpHeaders,
@@ -246,6 +266,7 @@ public interface ClientController {
                     )
             }
     )
+    @DeleteMapping("/api/client/phone")
     ResponseEntity<String> deletePhoneNumber(
             @Parameter(description = "연락처 id")
             @RequestParam(name = "phoneNumberId") Long phoneNumberId
@@ -265,6 +286,7 @@ public interface ClientController {
                     )
             }
     )
+    @PutMapping("/api/client")
     ResponseEntity<String> updateClient(
             @Parameter(description = "id 해더, password 해더")
             @RequestHeader HttpHeaders httpHeaders,

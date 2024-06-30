@@ -2,6 +2,7 @@ package com.nhnacademy.client.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.client.dto.message.ClientLoginMessageDto;
+import com.nhnacademy.client.dto.request.ClientOAuthRegisterRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
 import com.nhnacademy.client.dto.response.*;
@@ -13,10 +14,12 @@ import com.nhnacademy.client.exception.NotFoundClientException;
 import com.nhnacademy.client.exception.RabbitMessageConvertException;
 import com.nhnacademy.client.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +27,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClientServiceImp implements ClientService {
@@ -63,6 +68,26 @@ public class ClientServiceImp implements ClientService {
                         .role(roleRepository.findByRoleName("ROLE_USER"))
                 .build());
         return new ClientRegisterResponseDto(client.getClientEmail(), client.getClientCreatedAt());
+    }
+
+    @Override
+    public String oauthRegister(ClientOAuthRegisterRequestDto clientOAuthRegisterRequestDto) {
+        Client client = clientRepository.save(Client.builder()
+                .clientEmail(clientOAuthRegisterRequestDto.getIdentify())
+                .clientPassword(passwordEncoder.encode(UUID.randomUUID().toString()))
+                .clientName(clientOAuthRegisterRequestDto.getName())
+                .clientBirth(clientOAuthRegisterRequestDto.getBirth())
+                .clientCreatedAt(LocalDateTime.now())
+                .lastLoginDate(LocalDateTime.now())
+                .isDeleted(false)
+                .clientGrade(clientGradeRepository.findByClientGradeName("common"))
+                .build());
+
+        clientRoleRepository.save(ClientRole.builder()
+                .client(client)
+                .role(roleRepository.findByRoleName("ROLE_OAUTH"))
+                .build());
+        return "Success";
     }
 
     @Override
@@ -231,6 +256,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     @RabbitListener(queues = "${rabbit.login.queue.name}")
     public void receiveMessage(String message) {
+        log.info("consume login message: {}", message);
         ClientLoginMessageDto clientLoginMessageDto;
         try {
              clientLoginMessageDto = objectMapper.readValue(message , ClientLoginMessageDto.class);
@@ -241,7 +267,18 @@ public class ClientServiceImp implements ClientService {
         if (client == null || client.isDeleted()) {
             throw new NotFoundClientException("Not found : " + clientLoginMessageDto.getClientId());
         }
+        log.info("success update login");
         client.setLastLoginDate(clientLoginMessageDto.getLastLoginDate());
         clientRepository.save(client);
+    }
+
+    @Override
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void updateInactiveClients() {
+        int updatedRecords;
+        do {
+            updatedRecords = clientRepository.updateClientIsDeletedIfInactive();
+            log.info("batch start: delete row({}) ", updatedRecords);
+        } while (updatedRecords > 0);
     }
 }
