@@ -1,5 +1,6 @@
 package com.nhnacademy.client.service;
 
+import com.nhnacademy.client.dto.request.ClientOAuthRegisterRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
@@ -18,6 +19,15 @@ public interface ClientService {
      * @return 등록 성공시 회원가입 일시, 회원 이메일을 실패시 ClientEmailDupllicates 예외를 반환합니다..
      */
     ClientRegisterResponseDto register(ClientRegisterRequestDto registerInfo);
+
+    /**
+     * Oauth 회원 정보를 받아 회원가입을 수행하는 함수입니다.
+     *
+     * @author gihwanJang
+     * @param clientOAuthRegisterRequestDto
+     * @return 성공 여부를 반환합니다.
+     */
+    String oauthRegister(ClientOAuthRegisterRequestDto clientOAuthRegisterRequestDto);
 
     /**
      * 이메일을 받아 해당 유저의 로그인시 필요한 정보를 반환하는 함수입니다.
@@ -139,4 +149,9 @@ public interface ClientService {
      * @param message 유저의 id와 로그인 시간입니다.
      */
     void receiveMessage(String message);
+
+    /**
+     * 3달간 로그인 하지않은 유저를 매일자정 휴면처리 시키는 함수입니다.
+     */
+    void updateInactiveClients();
 }
