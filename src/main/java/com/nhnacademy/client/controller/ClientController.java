@@ -332,6 +332,23 @@ public interface ClientController {
             @RequestBody ClientRecoveryRequestDto clientRecoveryRequestDto
     );
 
+    @Operation(
+            summary = "회원 계정 복구",
+            description = "mail - 회원의 계정 복구",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공 여부 반환"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "검색된 유저가 없을 시 반환"
+                    )
+            }
+    )
+    @PutMapping("/api/client/recovery-oauth-account")
+    ResponseEntity<String> recoveryOauthClient(@RequestBody String email);
+
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
 
     ResponseEntity<ClientRegisterResponseDto> handleException(NotFoundClientException e);

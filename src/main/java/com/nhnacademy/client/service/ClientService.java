@@ -150,7 +150,16 @@ public interface ClientService {
      * @param token 요청 검증 값입니다.
      * @return 성공시 "Success" 실패시 NotFoundClient, BadRequest 예외
      */
-    String reccveryClinet(String email, String token);
+    String recveryClinet(String email, String token);
+
+    /**
+     * 이메일을 인자로 받아 휴면 계정을 복구하는 api입니다.
+     *
+     *
+     * @param email 유저를 식별하는 인자입니다.
+     * @return 성공시 "Success" 실패시 NotFoundClient 예외
+     */
+    String recveryOauthClinet(String email);
 
     /**
      * 이메일과 비밀번호를 인자로 받아 비밀번호를 변경하는 api 함수입니다.

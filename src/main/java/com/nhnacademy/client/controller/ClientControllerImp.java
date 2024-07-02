@@ -139,10 +139,17 @@ public class ClientControllerImp implements ClientController {
     @PutMapping("/api/client/recovery-account")
     public ResponseEntity<String> recoveryClient(@RequestBody ClientRecoveryRequestDto clientRecoveryRequestDto) {
         log.info("recovery client : {}", clientRecoveryRequestDto);
-        return ResponseEntity.ok(clientService.reccveryClinet(
+        return ResponseEntity.ok(clientService.recveryClinet(
                 clientRecoveryRequestDto.getEmail(),
                 clientRecoveryRequestDto.getToken()
         ));
+    }
+
+    @Override
+    @PutMapping("/api/client/recovery-oauth-account")
+    public ResponseEntity<String> recoveryOauthClient(@RequestBody String email) {
+        log.info("recovery client : {}", email);
+        return ResponseEntity.ok(clientService.recveryOauthClinet(email));
     }
 
     @Override

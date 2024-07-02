@@ -256,12 +256,23 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
-    public String reccveryClinet(String email, String token) {
+    public String recveryClinet(String email, String token) {
         Client client = clientRepository.findByClientEmail(email);
         if (client == null) {
             throw new NotFoundClientException("Not found : " + email);
         } else if (redisTemplate.opsForHash().get("recovery-account", token) == null) {
             throw new BadRequestException("Invalid token");
+        }
+        client.setDeleted(false);
+        clientRepository.save(client);
+        return "Success";
+    }
+
+    @Override
+    public String recveryOauthClinet(String email) {
+        Client client = clientRepository.findByClientEmail(email);
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + email);
         }
         client.setDeleted(false);
         clientRepository.save(client);
