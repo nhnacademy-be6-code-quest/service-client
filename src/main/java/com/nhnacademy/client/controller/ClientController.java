@@ -2,9 +2,7 @@ package com.nhnacademy.client.controller;
 
 import com.nhnacademy.client.dto.request.*;
 import com.nhnacademy.client.dto.response.*;
-import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
-import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
-import com.nhnacademy.client.exception.NotFoundClientException;
+import com.nhnacademy.client.exception.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -294,9 +292,53 @@ public interface ClientController {
             @RequestBody ClientUpdatePrivacyRequestDto clientUpdatePrivacyRequestDto
             );
 
+    @Operation(
+            summary = "회원 비밀번호 변경",
+            description = "MyPage/changePassword - 회원의 비밀번호 변경",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공 여부 반환"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "검색된 유저가 없을 시 반환"
+                    )
+            }
+    )
+    @PutMapping("/api/client/change-password")
+    ResponseEntity<String> changePasswordClient(
+            @Parameter(description = "수정할 유저 개인정보")
+            @RequestBody ClientChangePasswordRequestDto clientChangePasswordRequestDto
+    );
+
+    @Operation(
+            summary = "회원 계정 복구",
+            description = "mail - 회원의 계정 복구",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공 여부 반환"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "검색된 유저가 없을 시 반환"
+                    )
+            }
+    )
+    @PutMapping("/api/client/recovery-account")
+    ResponseEntity<String> recoveryClient(
+            @Parameter(description = "복구할 유저의 정보")
+            @RequestBody ClientRecoveryRequestDto clientRecoveryRequestDto
+    );
+
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
 
     ResponseEntity<ClientRegisterResponseDto> handleException(NotFoundClientException e);
 
     ResponseEntity<ClientLoginResponseDto> handleException(ClientAuthenticationFailedException e);
+
+    ResponseEntity<ClientLoginResponseDto> handleException(ClientDeletedException e);
+
+    ResponseEntity<String> handleException(ClientAddressOutOfRangeException e);
 }
