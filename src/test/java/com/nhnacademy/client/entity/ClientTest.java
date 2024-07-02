@@ -15,6 +15,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
 @TestPropertySource(properties = "spring.sql.init.mode=never")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ClientTest {
 
     @Autowired
