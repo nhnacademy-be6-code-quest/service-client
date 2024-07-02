@@ -31,6 +31,9 @@ public class SecurityConfig {
     private String gatewayIp;
     private int gatewayPort;
 
+    private String couponBatchIp;
+    private int couponBatchPort;
+
     @PostConstruct
     public void init() {
         List<ServiceInstance> instances = discoveryClient.getInstances("gateway");
@@ -39,8 +42,17 @@ public class SecurityConfig {
             gatewayIp = instance.getHost();
             gatewayPort = instance.getPort();
         }
+        instances = discoveryClient.getInstances("coupon-batch");
+        if (instances != null && !instances.isEmpty()) {
+            ServiceInstance instance = instances.getFirst();
+            couponBatchIp = instance.getHost();
+            couponBatchPort = instance.getPort();
+        }
         log.info("Gateway IP: " + gatewayIp);
         log.info("Gateway Port: " + gatewayPort);
+
+        log.info("Coupon Batch IP: " + couponBatchIp);
+        log.info("Coupon Batch Port: " + couponBatchPort);
     }
 
     @Bean
@@ -49,15 +61,25 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(req -> req.anyRequest().access((authentication, context) -> {
-                        String remoteAddr = context.getRequest().getRemoteAddr();
-                        int remotePort = context.getRequest().getRemotePort();
-                        boolean granted = remoteAddr.equals(gatewayIp) && gatewayPort == remotePort;
+                            String remoteAddr = context.getRequest().getRemoteAddr();
+                            int remotePort = context.getRequest().getRemotePort();
+                            boolean granted = remoteAddr.equals(gatewayIp) && gatewayPort == remotePort;
 
-                        if (!granted) {
-                            log.warn("Remote address {} not granted", remoteAddr);
-                        }
-                        return new AuthorizationDecision(granted);
-                    })
+                            if (!granted) {
+                                log.warn("Remote address {} not granted", remoteAddr);
+                            }
+                            return new AuthorizationDecision(granted);
+                        })
+                        .requestMatchers("/api/client/birth-coupon").access((authentication, context) -> {
+                            String remoteAddr = context.getRequest().getRemoteAddr();
+                            int remotePort = context.getRequest().getRemotePort();
+                            boolean granted = remoteAddr.equals(couponBatchIp) && couponBatchPort == remotePort;
+
+                            if (!granted) {
+                                log.warn("Remote address {} not granted", remoteAddr);
+                            }
+                            return new AuthorizationDecision(granted);
+                        })
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new HeaderFilter("/api/client", "GET"), UsernamePasswordAuthenticationFilter.class)
