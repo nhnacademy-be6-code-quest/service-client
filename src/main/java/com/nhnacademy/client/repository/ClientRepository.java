@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Client findByClientEmail(String clientEmail);
@@ -18,4 +20,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
             "SELECT client_id FROM client WHERE DATEDIFF(CURRENT_TIMESTAMP(), last_login_date) > 90 LIMIT 10000" +
             ") AS subquery)", nativeQuery = true)
     int updateClientIsDeletedIfInactive();
+
+    @Query(value = "SELECT c.clientId FROM Client c WHERE MONTH(c.clientBirth) = MONTH(CURRENT_DATE)")
+    List<Long> findClientsWithBirthInCurrentMonth();
 }
