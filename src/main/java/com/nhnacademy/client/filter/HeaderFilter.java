@@ -46,7 +46,7 @@ public class HeaderFilter extends OncePerRequestFilter {
             }
 
             if (!isContainRole(getHeaderValues(request, "X-User-Role"))) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Role header is missing or invalid");
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Role header is missing or invalid");
                 return;
             }
         }
