@@ -8,17 +8,16 @@ import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.entity.*;
-import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
-import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
-import com.nhnacademy.client.exception.NotFoundClientException;
-import com.nhnacademy.client.exception.RabbitMessageConvertException;
+import com.nhnacademy.client.exception.*;
 import com.nhnacademy.client.repository.*;
+import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,8 +33,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ClientServiceImp implements ClientService {
     private final ObjectMapper objectMapper;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RedisTemplate<String, String> redisTemplate;
+
+    private final RoleRepository roleRepository;
     private final ClientRepository clientRepository;
     private final ClientRoleRepository clientRoleRepository;
     private final ClientGradeRepository clientGradeRepository;
@@ -93,9 +94,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public ClientLoginResponseDto login(String email) {
         Client client = clientRepository.findByClientEmail(email);
-        if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + email);
-        }
+        checkByEmail(client, email);
         return ClientLoginResponseDto.builder()
                 .role(clientRoleRepository.findRolesByClient(client).stream()
                         .map(Role::getRoleName)
@@ -110,9 +109,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public ClientPrivacyResponseDto privacy(Long id) {
         Client client = clientRepository.findById(id).orElse(null);
-        if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + id);
-        }
+        checkById(client, id);
         return ClientPrivacyResponseDto.builder()
                 .clientEmail(client.getClientEmail())
                 .clientName(client.getClientName())
@@ -134,9 +131,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public List<ClientDeliveryAddressResponseDto> deliveryAddress(Long id) {
         Client client = clientRepository.findById(id).orElse(null);
-        if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + id);
-        }
+        checkById(client, id);
         return clientDeliveryAddressRepository.findAllByClient(client).stream()
                 .map(address -> ClientDeliveryAddressResponseDto.builder()
                         .clientDeliveryAddressId(address.getClientDeliveryAddressId())
@@ -151,9 +146,7 @@ public class ClientServiceImp implements ClientService {
     @Override
     public List<ClientPhoneNumberResponseDto> getPhoneNumbers(Long id) {
         Client client = clientRepository.findById(id).orElse(null);
-        if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + id);
-        }
+        checkById(client, id);
         return clientNumberRepository.findAllByClient(client).stream()
                 .map(number -> ClientPhoneNumberResponseDto.builder()
                         .clientNumberId(number.getClientNumberId())
@@ -189,8 +182,9 @@ public class ClientServiceImp implements ClientService {
     @Override
     public String registerAddress(ClientRegisterAddressRequestDto clientRegisterAddressDto, Long id) {
         Client client = clientRepository.findById(id).orElse(null);
-        if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + id);
+        checkById(client, id);
+        if(deliveryAddress(id).size() >= 10) {
+            throw new ClientAddressOutOfRangeException("Client address is too Many");
         }
         clientDeliveryAddressRepository.save(ClientDeliveryAddress.builder()
                         .client(client)
@@ -205,9 +199,8 @@ public class ClientServiceImp implements ClientService {
     @Override
     public String registerPhoneNumber(ClientRegisterPhoneNumberRequestDto clientPhoneNumberResponseDto, Long id) {
         Client client = clientRepository.findById(id).orElse(null);
-        if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + id);
-        }
+        checkById(client, id);
+
         clientNumberRepository.save(ClientNumber.builder()
                         .client(client)
                         .clientPhoneNumber(clientPhoneNumberResponseDto.getPhoneNumber())
@@ -230,9 +223,8 @@ public class ClientServiceImp implements ClientService {
     @Override
     public String deleteClient(Long id, String password) {
         Client client = clientRepository.findById(id).orElse(null);
-        if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + id);
-        } else if (!passwordEncoder.matches(password, client.getClientPassword())) {
+        checkById(client, id);
+        if (!passwordEncoder.matches(password, client.getClientPassword())) {
             throw new ClientAuthenticationFailedException("Client password does not match");
         }
         client.setDeleted(true);
@@ -244,11 +236,45 @@ public class ClientServiceImp implements ClientService {
     @Override
     public String updateClient(Long id, String name, LocalDate birth) {
         Client client = clientRepository.findById(id).orElse(null);
-        if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + id);
-        }
+        checkById(client, id);
         client.setClientName(name);
         client.setClientBirth(birth);
+        clientRepository.save(client);
+        return "Success";
+    }
+
+    @Override
+    public String changePasswordClient(String email, String password, String token) {
+        Client client = clientRepository.findByClientEmail(email);
+        checkByEmail(client, email);
+        if (redisTemplate.opsForHash().get("change-password", token) == null) {
+            throw new BadRequestException("Invalid token");
+        }
+        client.setClientPassword(passwordEncoder.encode(password));
+        clientRepository.save(client);
+        return "Success";
+    }
+
+    @Override
+    public String recveryClinet(String email, String token) {
+        Client client = clientRepository.findByClientEmail(email);
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + email);
+        } else if (redisTemplate.opsForHash().get("recovery-account", token) == null) {
+            throw new BadRequestException("Invalid token");
+        }
+        client.setDeleted(false);
+        clientRepository.save(client);
+        return "Success";
+    }
+
+    @Override
+    public String recveryOauthClinet(String email) {
+        Client client = clientRepository.findByClientEmail(email);
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + email);
+        }
+        client.setDeleted(false);
         clientRepository.save(client);
         return "Success";
     }
@@ -280,5 +306,21 @@ public class ClientServiceImp implements ClientService {
             updatedRecords = clientRepository.updateClientIsDeletedIfInactive();
             log.info("batch start: delete row({}) ", updatedRecords);
         } while (updatedRecords > 0);
+    }
+
+    private void checkByEmail(Client client, String email) {
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + email);
+        } else if (client.isDeleted()) {
+            throw new ClientDeletedException("Deleted Client : " + email);
+        }
+    }
+
+    private void checkById(Client client, Long id) {
+        if (client == null) {
+            throw new NotFoundClientException("Not found : " + id);
+        } else if (client.isDeleted()) {
+            throw new ClientDeletedException("Deleted Client : " + id);
+        }
     }
 }

@@ -2,9 +2,7 @@ package com.nhnacademy.client.controller;
 
 import com.nhnacademy.client.dto.request.*;
 import com.nhnacademy.client.dto.response.*;
-import com.nhnacademy.client.exception.ClientAuthenticationFailedException;
-import com.nhnacademy.client.exception.ClientEmailDuplicatesException;
-import com.nhnacademy.client.exception.NotFoundClientException;
+import com.nhnacademy.client.exception.*;
 import com.nhnacademy.client.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -127,6 +125,34 @@ public class ClientControllerImp implements ClientController {
     }
 
     @Override
+    @PutMapping("/api/client/change-password")
+    public ResponseEntity<String> changePasswordClient(@RequestBody ClientChangePasswordRequestDto clientChangePasswordRequestDto) {
+        log.info("Change password client : {}", clientChangePasswordRequestDto);
+        return ResponseEntity.ok(clientService.changePasswordClient(
+                clientChangePasswordRequestDto.getEmail(),
+                clientChangePasswordRequestDto.getNewPassword(),
+                clientChangePasswordRequestDto.getToken()
+        ));
+    }
+
+    @Override
+    @PutMapping("/api/client/recovery-account")
+    public ResponseEntity<String> recoveryClient(@RequestBody ClientRecoveryRequestDto clientRecoveryRequestDto) {
+        log.info("recovery client : {}", clientRecoveryRequestDto);
+        return ResponseEntity.ok(clientService.recveryClinet(
+                clientRecoveryRequestDto.getEmail(),
+                clientRecoveryRequestDto.getToken()
+        ));
+    }
+
+    @Override
+    @PutMapping("/api/client/recovery-oauth-account")
+    public ResponseEntity<String> recoveryOauthClient(@RequestBody String email) {
+        log.info("recovery client : {}", email);
+        return ResponseEntity.ok(clientService.recveryOauthClinet(email));
+    }
+
+    @Override
     @ExceptionHandler(ClientEmailDuplicatesException.class)
     public ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e) {
         return new ResponseEntity<>(null, HttpStatus.CONFLICT);
@@ -142,5 +168,17 @@ public class ClientControllerImp implements ClientController {
     @ExceptionHandler(ClientAuthenticationFailedException.class)
     public ResponseEntity<ClientLoginResponseDto> handleException(ClientAuthenticationFailedException e) {
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    }
+
+    @Override
+    @ExceptionHandler(ClientDeletedException.class)
+    public ResponseEntity<ClientLoginResponseDto> handleException(ClientDeletedException e) {
+        return ResponseEntity.status(HttpStatus.GONE).build();
+    }
+
+    @Override
+    @ExceptionHandler(ClientAddressOutOfRangeException.class)
+    public ResponseEntity<String> handleException(ClientAddressOutOfRangeException e) {
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 }
