@@ -280,6 +280,11 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
+    public List<Long> getThisMonthBirthClient() {
+        return clientRepository.findClientsWithBirthInCurrentMonth();
+    }
+
+    @Override
     @RabbitListener(queues = "${rabbit.login.queue.name}")
     public void receiveMessage(String message) {
         log.info("consume login message: {}", message);

@@ -349,6 +349,19 @@ public interface ClientController {
     @PutMapping("/api/client/recovery-oauth-account")
     ResponseEntity<String> recoveryOauthClient(@RequestBody String email);
 
+    @Operation(
+            summary = "이번달 생일자 리스트",
+            description = "coupon - 이번달 생일자 리스트",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "생일자 리스트"
+                    )
+            }
+    )
+    @GetMapping("/api/client/birth-coupon")
+    ResponseEntity<List<Long>> getThisMonthBirthClient();
+
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
 
     ResponseEntity<ClientRegisterResponseDto> handleException(NotFoundClientException e);
