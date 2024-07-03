@@ -186,9 +186,4 @@ public interface ClientService {
      * @param message 유저의 id와 로그인 시간입니다.
      */
     void receiveMessage(String message);
-
-    /**
-     * 3달간 로그인 하지않은 유저를 매일자정 휴면처리 시키는 함수입니다.
-     */
-    void updateInactiveClients();
 }

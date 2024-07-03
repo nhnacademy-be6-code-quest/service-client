@@ -303,16 +303,6 @@ public class ClientServiceImp implements ClientService {
         clientRepository.save(client);
     }
 
-    @Override
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void updateInactiveClients() {
-        int updatedRecords;
-        do {
-            updatedRecords = clientRepository.updateClientIsDeletedIfInactive();
-            log.info("batch start: delete row({}) ", updatedRecords);
-        } while (updatedRecords > 0);
-    }
-
     private void checkByEmail(Client client, String email) {
         if (client == null) {
             throw new NotFoundClientException("Not found : " + email);
