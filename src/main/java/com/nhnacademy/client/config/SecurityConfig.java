@@ -1,86 +1,30 @@
 package com.nhnacademy.client.config;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import com.nhnacademy.client.filter.HeaderFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.List;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final DiscoveryClient discoveryClient;
-
-    private String gatewayIp;
-    private int gatewayPort;
-
-    private String couponBatchIp;
-    private int couponBatchPort;
-
-    @PostConstruct
-    public void init() {
-        List<ServiceInstance> instances = discoveryClient.getInstances("gateway");
-        if (instances != null && !instances.isEmpty()) {
-            ServiceInstance instance = instances.getFirst();
-            gatewayIp = instance.getHost();
-            gatewayPort = instance.getPort();
-        }
-        instances = discoveryClient.getInstances("coupon-batch");
-        if (instances != null && !instances.isEmpty()) {
-            ServiceInstance instance = instances.getFirst();
-            couponBatchIp = instance.getHost();
-            couponBatchPort = instance.getPort();
-        }
-        log.info("Gateway IP: " + gatewayIp);
-        log.info("Gateway Port: " + gatewayPort);
-
-        log.info("Coupon Batch IP: " + couponBatchIp);
-        log.info("Coupon Batch Port: " + couponBatchPort);
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .authorizeHttpRequests(req -> req.anyRequest().access((authentication, context) -> {
-                            String remoteAddr = context.getRequest().getRemoteAddr();
-                            int remotePort = context.getRequest().getRemotePort();
-                            boolean granted = remoteAddr.equals(gatewayIp) && gatewayPort == remotePort;
-
-                            if (!granted) {
-                                log.warn("Remote address {} not granted", remoteAddr);
-                            }
-                            return new AuthorizationDecision(granted);
-                        })
-                        .requestMatchers("/api/client/birth-coupon").access((authentication, context) -> {
-                            String remoteAddr = context.getRequest().getRemoteAddr();
-                            int remotePort = context.getRequest().getRemotePort();
-                            boolean granted = remoteAddr.equals(couponBatchIp) && couponBatchPort == remotePort;
-
-                            if (!granted) {
-                                log.warn("Remote address {} not granted", remoteAddr);
-                            }
-                            return new AuthorizationDecision(granted);
-                        })
-                )
+                .authorizeHttpRequests(req -> req.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new HeaderFilter("/api/client", "GET"), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new HeaderFilter("/api/client", "DELETE"), UsernamePasswordAuthenticationFilter.class)

@@ -105,7 +105,7 @@ class HeaderFilterTest {
 
         // Then
         verify(filterChain, never()).doFilter(request, response);
-        assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
+        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
     }
 
     @Test
@@ -121,6 +121,6 @@ class HeaderFilterTest {
 
         // Then
         verify(filterChain, never()).doFilter(request, response);
-        assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
+        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
     }
 }
