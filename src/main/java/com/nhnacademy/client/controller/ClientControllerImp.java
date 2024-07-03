@@ -153,6 +153,13 @@ public class ClientControllerImp implements ClientController {
     }
 
     @Override
+    @GetMapping("/api/client/birth-coupon")
+    public ResponseEntity<List<Long>> getThisMonthBirthClient() {
+        log.info("Get this month birth coupon");
+        return ResponseEntity.ok(clientService.getThisMonthBirthClient());
+    }
+
+    @Override
     @ExceptionHandler(ClientEmailDuplicatesException.class)
     public ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e) {
         return new ResponseEntity<>(null, HttpStatus.CONFLICT);

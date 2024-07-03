@@ -280,6 +280,11 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
+    public List<Long> getThisMonthBirthClient() {
+        return clientRepository.findClientsWithBirthInCurrentMonth();
+    }
+
+    @Override
     @RabbitListener(queues = "${rabbit.login.queue.name}")
     public void receiveMessage(String message) {
         log.info("consume login message: {}", message);
@@ -296,16 +301,6 @@ public class ClientServiceImp implements ClientService {
         log.info("success update login");
         client.setLastLoginDate(clientLoginMessageDto.getLastLoginDate());
         clientRepository.save(client);
-    }
-
-    @Override
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void updateInactiveClients() {
-        int updatedRecords;
-        do {
-            updatedRecords = clientRepository.updateClientIsDeletedIfInactive();
-            log.info("batch start: delete row({}) ", updatedRecords);
-        } while (updatedRecords > 0);
     }
 
     private void checkByEmail(Client client, String email) {
