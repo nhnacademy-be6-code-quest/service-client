@@ -30,6 +30,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ClientServiceImp implements ClientService {
+    private final String NOT_FOUND_MESSAGE = "Not found : ";
     private final String SUCCESS_MESSAGE = "Success";
 
     private final ObjectMapper objectMapper;
@@ -159,7 +160,7 @@ public class ClientServiceImp implements ClientService {
     public ClientOrderResponseDto order(Long id) {
         Client client = clientRepository.findById(id).orElse(null);
         if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + id);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + id);
         }
         return ClientOrderResponseDto.builder()
                 .clientId(client.getClientId())
@@ -259,7 +260,7 @@ public class ClientServiceImp implements ClientService {
     public String recveryClinet(String email, String token) {
         Client client = clientRepository.findByClientEmail(email);
         if (client == null) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);
         } else if (redisTemplate.opsForHash().get("recovery-account", token) == null) {
             throw new ClientAuthenticationFailedException("client token does not exist");
         }
@@ -272,7 +273,7 @@ public class ClientServiceImp implements ClientService {
     public String recveryOauthClinet(String email) {
         Client client = clientRepository.findByClientEmail(email);
         if (client == null) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);
         }
         client.setDeleted(false);
         clientRepository.save(client);
@@ -296,7 +297,7 @@ public class ClientServiceImp implements ClientService {
         }
         Client client = clientRepository.findById(clientLoginMessageDto.getClientId()).orElse(null);
         if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + clientLoginMessageDto.getClientId());
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + clientLoginMessageDto.getClientId());
         }
         log.info("success update login");
         client.setLastLoginDate(clientLoginMessageDto.getLastLoginDate());
@@ -305,7 +306,7 @@ public class ClientServiceImp implements ClientService {
 
     private void checkByEmail(Client client, String email) {
         if (client == null) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);
         } else if (client.isDeleted()) {
             throw new ClientDeletedException("Deleted Client : " + email);
         }
@@ -313,7 +314,7 @@ public class ClientServiceImp implements ClientService {
 
     private void checkById(Client client, Long id) {
         if (client == null) {
-            throw new NotFoundClientException("Not found : " + id);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + id);
         } else if (client.isDeleted()) {
             throw new ClientDeletedException("Deleted Client : " + id);
         }
