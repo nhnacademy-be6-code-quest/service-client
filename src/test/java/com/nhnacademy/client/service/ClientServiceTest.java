@@ -3,9 +3,7 @@ package com.nhnacademy.client.service;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.client.dto.message.ClientLoginMessageDto;
-import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
-import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
-import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
+import com.nhnacademy.client.dto.request.*;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.entity.*;
 import com.nhnacademy.client.exception.*;
@@ -18,7 +16,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -48,6 +48,10 @@ class ClientServiceTest {
     private ClientNumberRepository clientNumberRepository;
     @Mock
     private ClientDeliveryAddressRepository clientDeliveryAddressRepository;
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
+    @Mock
+    private HashOperations<String, Object, Object> hashOperations;
 
     @InjectMocks
     private ClientServiceImp clientService;
@@ -55,6 +59,7 @@ class ClientServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        when(redisTemplate.opsForHash()).thenReturn(hashOperations);
     }
 
     @Test
@@ -149,7 +154,6 @@ class ClientServiceTest {
         // Given
         int page = 0;
         int size = 10;
-        PageRequest pageRequest = PageRequest.of(page, size);
         Client client = new Client(1L, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         Page<Client> clientPage = new PageImpl<>(List.of(client));
         when(clientRepository.findAll(any(PageRequest.class))).thenReturn(clientPage);
@@ -175,8 +179,7 @@ class ClientServiceTest {
         List<ClientDeliveryAddressResponseDto> response = clientService.deliveryAddress(id);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response).hasSize(1);
+        assertThat(response).isNotNull().hasSize(1);
     }
 
     @Test
@@ -203,8 +206,7 @@ class ClientServiceTest {
         List<ClientPhoneNumberResponseDto> response = clientService.getPhoneNumbers(id);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response).hasSize(1);
+        assertThat(response).isNotNull().hasSize(1);
     }
 
     @Test
@@ -425,6 +427,7 @@ class ClientServiceTest {
     }
 
     @Test
+    @SuppressWarnings("java:S1874")
     void testReceiveMessage_ThrowsRabbitMessageConvertException() throws IOException {
         // Given
         String message = "invalid message";
@@ -433,5 +436,105 @@ class ClientServiceTest {
         // When & Then
         assertThatThrownBy(() -> clientService.receiveMessage(message))
                 .isInstanceOf(RabbitMessageConvertException.class);
+    }
+
+    // Additional tests for new methods
+
+    @Test
+    void testChangePasswordClient() {
+        // Given
+        String email = "test@example.com";
+        String newPassword = "newPassword123";
+        String token = "validToken";
+        Client client = new Client(1L, new ClientGrade(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+
+        when(clientRepository.findByClientEmail(email)).thenReturn(client);
+        when(redisTemplate.opsForHash().get("change-password", token)).thenReturn("valid");
+
+        // When
+        String response = clientService.changePasswordClient(email, newPassword, token);
+
+        // Then
+        assertThat(response).isEqualTo("Success");
+        verify(clientRepository).save(client);
+    }
+
+    @Test
+    void testChangePasswordClient_ThrowsBadRequestException() {
+        // Given
+        String email = "test@example.com";
+        String newPassword = "newPassword123";
+        String token = "invalidToken";
+
+        when(clientRepository.findByClientEmail(email)).thenReturn(new Client());
+        when(hashOperations.get("change-password", token)).thenReturn(null);
+
+        // When & Then
+        assertThatThrownBy(() -> clientService.changePasswordClient(email, newPassword, token))
+                .isInstanceOf(ClientAuthenticationFailedException.class);
+    }
+
+    @Test
+    void testRecveryClinet() {
+        // Given
+        String email = "test@example.com";
+        String token = "validToken";
+        Client client = new Client(1L, new ClientGrade(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), true, null);
+
+        when(clientRepository.findByClientEmail(email)).thenReturn(client);
+        when(redisTemplate.opsForHash().get("recovery-account", token)).thenReturn("valid");
+
+        // When
+        String response = clientService.recveryClinet(email, token);
+
+        // Then
+        assertThat(response).isEqualTo("Success");
+        assertThat(client.isDeleted()).isFalse();
+        verify(clientRepository).save(client);
+    }
+
+    @Test
+    void testRecveryClinet_ThrowsBadRequestException() {
+        // Given
+        String email = "test@example.com";
+        String token = "invalidToken";
+
+        when(clientRepository.findByClientEmail(email)).thenReturn(new Client());
+        when(redisTemplate.opsForHash().get("recovery-account", token)).thenReturn(null);
+
+        // When & Then
+        assertThatThrownBy(() -> clientService.recveryClinet(email, token))
+                .isInstanceOf(ClientAuthenticationFailedException.class);
+    }
+
+    @Test
+    void testRecveryOauthClinet() {
+        // Given
+        String email = "test@example.com";
+        Client client = new Client(1L, new ClientGrade(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), true, null);
+
+        when(clientRepository.findByClientEmail(email)).thenReturn(client);
+
+        // When
+        String response = clientService.recveryOauthClinet(email);
+
+        // Then
+        assertThat(response).isEqualTo("Success");
+        assertThat(client.isDeleted()).isFalse();
+        verify(clientRepository).save(client);
+    }
+
+    @Test
+    void testGetThisMonthBirthClient() {
+        // Given
+        List<Long> clientIds = List.of(1L, 2L, 3L);
+
+        when(clientRepository.findClientsWithBirthInCurrentMonth()).thenReturn(clientIds);
+
+        // When
+        List<Long> response = clientService.getThisMonthBirthClient();
+
+        // Then
+        assertThat(response).isNotNull().hasSize(3);
     }
 }

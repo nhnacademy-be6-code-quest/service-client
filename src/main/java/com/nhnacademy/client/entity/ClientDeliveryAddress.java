@@ -18,6 +18,7 @@ public class ClientDeliveryAddress {
     @ManyToOne
     @JoinColumn(name = "clientId")
     private Client client;
+    @SuppressWarnings("java:S1700") // Be sure variable name
     private String clientDeliveryAddress;
     private String clientDeliveryAddressDetail;
     private String clientDeliveryAddressNickname;

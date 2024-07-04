@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
@@ -181,7 +180,7 @@ class ClientTest {
         // Then
         assertThat(client1).isEqualTo(client2);
         assertThat(client1).isNotEqualTo(client3);
-        assertThat(client1.hashCode()).isEqualTo(client2.hashCode());
+        assertThat(client1.hashCode()).hasSameHashCodeAs(client2.hashCode());
         assertThat(client1.hashCode()).isNotEqualTo(client3.hashCode());
     }
 

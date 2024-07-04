@@ -10,7 +10,6 @@ import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.entity.*;
 import com.nhnacademy.client.exception.*;
 import com.nhnacademy.client.repository.*;
-import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +30,9 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ClientServiceImp implements ClientService {
+    private static final String NOT_FOUND_MESSAGE = "Not found : ";
+    private static final String SUCCESS_MESSAGE = "Success";
+
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, String> redisTemplate;
@@ -88,7 +89,7 @@ public class ClientServiceImp implements ClientService {
                 .client(client)
                 .role(roleRepository.findByRoleName("ROLE_OAUTH"))
                 .build());
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -159,7 +160,7 @@ public class ClientServiceImp implements ClientService {
     public ClientOrderResponseDto order(Long id) {
         Client client = clientRepository.findById(id).orElse(null);
         if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + id);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + id);
         }
         return ClientOrderResponseDto.builder()
                 .clientId(client.getClientId())
@@ -193,7 +194,7 @@ public class ClientServiceImp implements ClientService {
                         .clientDeliveryAddress(clientRegisterAddressDto.getClientDeliveryAddress())
                         .clientDeliveryAddressDetail(clientRegisterAddressDto.getClientDeliveryAddressDetail())
                 .build());
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -205,19 +206,19 @@ public class ClientServiceImp implements ClientService {
                         .client(client)
                         .clientPhoneNumber(clientPhoneNumberResponseDto.getPhoneNumber())
                 .build());
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
     public String deleteAddress(Long addressId) {
         clientDeliveryAddressRepository.deleteById(addressId);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
     public String deletePhoneNumber(Long phoneNumberId) {
         clientNumberRepository.deleteById(phoneNumberId);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -230,7 +231,7 @@ public class ClientServiceImp implements ClientService {
         client.setDeleted(true);
         client.setClientDeleteDate(LocalDateTime.now());
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -240,7 +241,7 @@ public class ClientServiceImp implements ClientService {
         client.setClientName(name);
         client.setClientBirth(birth);
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -248,35 +249,35 @@ public class ClientServiceImp implements ClientService {
         Client client = clientRepository.findByClientEmail(email);
         checkByEmail(client, email);
         if (redisTemplate.opsForHash().get("change-password", token) == null) {
-            throw new BadRequestException("Invalid token");
+            throw new ClientAuthenticationFailedException("client token does not exist");
         }
         client.setClientPassword(passwordEncoder.encode(password));
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
     public String recveryClinet(String email, String token) {
         Client client = clientRepository.findByClientEmail(email);
         if (client == null) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);
         } else if (redisTemplate.opsForHash().get("recovery-account", token) == null) {
-            throw new BadRequestException("Invalid token");
+            throw new ClientAuthenticationFailedException("client token does not exist");
         }
         client.setDeleted(false);
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
     public String recveryOauthClinet(String email) {
         Client client = clientRepository.findByClientEmail(email);
         if (client == null) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);
         }
         client.setDeleted(false);
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -296,7 +297,7 @@ public class ClientServiceImp implements ClientService {
         }
         Client client = clientRepository.findById(clientLoginMessageDto.getClientId()).orElse(null);
         if (client == null || client.isDeleted()) {
-            throw new NotFoundClientException("Not found : " + clientLoginMessageDto.getClientId());
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + clientLoginMessageDto.getClientId());
         }
         log.info("success update login");
         client.setLastLoginDate(clientLoginMessageDto.getLastLoginDate());
@@ -305,7 +306,7 @@ public class ClientServiceImp implements ClientService {
 
     private void checkByEmail(Client client, String email) {
         if (client == null) {
-            throw new NotFoundClientException("Not found : " + email);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);
         } else if (client.isDeleted()) {
             throw new ClientDeletedException("Deleted Client : " + email);
         }
@@ -313,7 +314,7 @@ public class ClientServiceImp implements ClientService {
 
     private void checkById(Client client, Long id) {
         if (client == null) {
-            throw new NotFoundClientException("Not found : " + id);
+            throw new NotFoundClientException(NOT_FOUND_MESSAGE + id);
         } else if (client.isDeleted()) {
             throw new ClientDeletedException("Deleted Client : " + id);
         }

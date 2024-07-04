@@ -10,24 +10,21 @@ class ClientLoginResponseDtoTest {
 
     @Test
     void testBuilder() {
-        // Given
-        List<String> role = List.of("ROLE_USER");
+        List<String> roles = List.of("ROLE_USER");
         Long clientId = 1L;
         String clientEmail = "test@example.com";
-        String clientPassword = "Password1!";
-        String clientName = "John Doe";
+        String clientPassword = "password";
+        String clientName = "Test User";
 
-        // When
         ClientLoginResponseDto dto = ClientLoginResponseDto.builder()
-                .role(role)
+                .role(roles)
                 .clientId(clientId)
                 .clientEmail(clientEmail)
                 .clientPassword(clientPassword)
                 .clientName(clientName)
                 .build();
 
-        // Then
-        assertThat(dto.getRole()).isEqualTo(role);
+        assertThat(dto.getRole()).isEqualTo(roles);
         assertThat(dto.getClientId()).isEqualTo(clientId);
         assertThat(dto.getClientEmail()).isEqualTo(clientEmail);
         assertThat(dto.getClientPassword()).isEqualTo(clientPassword);
@@ -35,61 +32,38 @@ class ClientLoginResponseDtoTest {
     }
 
     @Test
-    void testGetterAndSetter() {
-        // Given
-        List<String> role = List.of("ROLE_USER");
-        Long clientId = 1L;
-        String clientEmail = "test@example.com";
-        String clientPassword = "Password1!";
-        String clientName = "John Doe";
+    void testSettersAndGetters() {
+        ClientLoginResponseDto dto = ClientLoginResponseDto.builder().build();
+        List<String> roles = List.of("ROLE_USER");
+        dto.setRole(roles);
+        dto.setClientId(1L);
+        dto.setClientEmail("test@example.com");
+        dto.setClientPassword("password");
+        dto.setClientName("Test User");
 
-        // When
-        ClientLoginResponseDto dto = ClientLoginResponseDto.builder()
-                .role(role)
-                .clientId(clientId)
-                .clientEmail(clientEmail)
-                .clientPassword(clientPassword)
-                .clientName(clientName)
-                .build();
-
-        // Then
-        assertThat(dto.getRole()).isEqualTo(role);
-        assertThat(dto.getClientId()).isEqualTo(clientId);
-        assertThat(dto.getClientEmail()).isEqualTo(clientEmail);
-        assertThat(dto.getClientPassword()).isEqualTo(clientPassword);
-        assertThat(dto.getClientName()).isEqualTo(clientName);
+        assertThat(dto.getRole()).isEqualTo(roles);
+        assertThat(dto.getClientId()).isEqualTo(1L);
+        assertThat(dto.getClientEmail()).isEqualTo("test@example.com");
+        assertThat(dto.getClientPassword()).isEqualTo("password");
+        assertThat(dto.getClientName()).isEqualTo("Test User");
     }
 
     @Test
     void testAllArgsConstructor() {
-        // Given
-        List<String> role = List.of("ROLE_USER");
+        List<String> roles = List.of("ROLE_USER");
         Long clientId = 1L;
         String clientEmail = "test@example.com";
-        String clientPassword = "Password1!";
-        String clientName = "John Doe";
+        String clientPassword = "password";
+        String clientName = "Test User";
 
-        // When
-        ClientLoginResponseDto dto = new ClientLoginResponseDto(role, clientId, clientEmail, clientPassword, clientName);
+        ClientLoginResponseDto dto = new ClientLoginResponseDto(
+                roles, clientId, clientEmail, clientPassword, clientName);
 
-        // Then
-        assertThat(dto.getRole()).isEqualTo(role);
+        assertThat(dto.getRole()).isEqualTo(roles);
         assertThat(dto.getClientId()).isEqualTo(clientId);
         assertThat(dto.getClientEmail()).isEqualTo(clientEmail);
         assertThat(dto.getClientPassword()).isEqualTo(clientPassword);
         assertThat(dto.getClientName()).isEqualTo(clientName);
     }
 
-    @Test
-    void testNoArgsConstructor() {
-        // When
-        ClientLoginResponseDto dto = ClientLoginResponseDto.builder().build();
-
-        // Then
-        assertThat(dto.getRole()).isNull();
-        assertThat(dto.getClientId()).isNull();
-        assertThat(dto.getClientEmail()).isNull();
-        assertThat(dto.getClientPassword()).isNull();
-        assertThat(dto.getClientName()).isNull();
-    }
 }

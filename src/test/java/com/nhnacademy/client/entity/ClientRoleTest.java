@@ -190,7 +190,7 @@ class ClientRoleTest {
         // Then
         assertThat(clientRole1).isEqualTo(clientRole2);
         assertThat(clientRole1).isNotEqualTo(clientRole3);
-        assertThat(clientRole1.hashCode()).isEqualTo(clientRole2.hashCode());
+        assertThat(clientRole1.hashCode()).hasSameHashCodeAs(clientRole2.hashCode());
         assertThat(clientRole1.hashCode()).isNotEqualTo(clientRole3.hashCode());
     }
 

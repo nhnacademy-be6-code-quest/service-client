@@ -162,7 +162,7 @@ class ClientNumberTest {
         // Then
         assertThat(clientNumber1).isEqualTo(clientNumber2);
         assertThat(clientNumber1).isNotEqualTo(clientNumber3);
-        assertThat(clientNumber1.hashCode()).isEqualTo(clientNumber2.hashCode());
+        assertThat(clientNumber1.hashCode()).hasSameHashCodeAs(clientNumber2.hashCode());
         assertThat(clientNumber1.hashCode()).isNotEqualTo(clientNumber3.hashCode());
     }
 

@@ -10,13 +10,11 @@ class ClientPrivacyResponseDtoTest {
 
     @Test
     void testBuilder() {
-        // Given
         String clientGrade = "VIP";
         String clientEmail = "test@example.com";
         String clientName = "John Doe";
         LocalDate clientBirth = LocalDate.of(1990, 1, 1);
 
-        // When
         ClientPrivacyResponseDto dto = ClientPrivacyResponseDto.builder()
                 .clientGrade(clientGrade)
                 .clientEmail(clientEmail)
@@ -24,7 +22,6 @@ class ClientPrivacyResponseDtoTest {
                 .clientBirth(clientBirth)
                 .build();
 
-        // Then
         assertThat(dto.getClientGrade()).isEqualTo(clientGrade);
         assertThat(dto.getClientEmail()).isEqualTo(clientEmail);
         assertThat(dto.getClientName()).isEqualTo(clientName);
@@ -32,37 +29,49 @@ class ClientPrivacyResponseDtoTest {
     }
 
     @Test
-    void testGetterAndSetter() {
-        // Given
-        String clientGrade = "VIP";
-        String clientEmail = "test@example.com";
-        String clientName = "John Doe";
-        LocalDate clientBirth = LocalDate.of(1990, 1, 1);
-
-        // When
-        ClientPrivacyResponseDto dto = ClientPrivacyResponseDto.builder()
-                .clientGrade(clientGrade)
-                .clientEmail(clientEmail)
-                .clientName(clientName)
-                .clientBirth(clientBirth)
-                .build();
-
-        // Then
-        assertThat(dto.getClientGrade()).isEqualTo(clientGrade);
-        assertThat(dto.getClientEmail()).isEqualTo(clientEmail);
-        assertThat(dto.getClientName()).isEqualTo(clientName);
-        assertThat(dto.getClientBirth()).isEqualTo(clientBirth);
-    }
-
-    @Test
-    void testNoArgsConstructor() {
-        // When
+    void testSettersAndGetters() {
         ClientPrivacyResponseDto dto = ClientPrivacyResponseDto.builder().build();
+        dto.setClientGrade("VIP");
+        dto.setClientEmail("test@example.com");
+        dto.setClientName("John Doe");
+        dto.setClientBirth(LocalDate.of(1990, 1, 1));
 
-        // Then
-        assertThat(dto.getClientGrade()).isNull();
-        assertThat(dto.getClientEmail()).isNull();
-        assertThat(dto.getClientName()).isNull();
-        assertThat(dto.getClientBirth()).isNull();
+        assertThat(dto.getClientGrade()).isEqualTo("VIP");
+        assertThat(dto.getClientEmail()).isEqualTo("test@example.com");
+        assertThat(dto.getClientName()).isEqualTo("John Doe");
+        assertThat(dto.getClientBirth()).isEqualTo(LocalDate.of(1990, 1, 1));
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+        ClientPrivacyResponseDto dto1 = ClientPrivacyResponseDto.builder()
+                .clientGrade("VIP")
+                .clientEmail("test@example.com")
+                .clientName("John Doe")
+                .clientBirth(LocalDate.of(1990, 1, 1))
+                .build();
+
+        ClientPrivacyResponseDto dto2 = ClientPrivacyResponseDto.builder()
+                .clientGrade("VIP")
+                .clientEmail("test@example.com")
+                .clientName("John Doe")
+                .clientBirth(LocalDate.of(1990, 1, 1))
+                .build();
+
+        assertThat(dto1).isEqualTo(dto2);
+        assertThat(dto1.hashCode()).hasSameHashCodeAs(dto2.hashCode());
+    }
+
+    @Test
+    void testToString() {
+        ClientPrivacyResponseDto dto = ClientPrivacyResponseDto.builder()
+                .clientGrade("VIP")
+                .clientEmail("test@example.com")
+                .clientName("John Doe")
+                .clientBirth(LocalDate.of(1990, 1, 1))
+                .build();
+
+        String expectedToString = "ClientPrivacyResponseDto(clientGrade=VIP, clientEmail=test@example.com, clientName=John Doe, clientBirth=1990-01-01)";
+        assertThat(dto.toString()).hasToString(expectedToString);
     }
 }

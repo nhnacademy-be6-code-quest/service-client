@@ -189,7 +189,7 @@ class ClientDeliveryAddressTest {
         // Then
         assertThat(clientDeliveryAddress1).isEqualTo(clientDeliveryAddress2);
         assertThat(clientDeliveryAddress1).isNotEqualTo(clientDeliveryAddress3);
-        assertThat(clientDeliveryAddress1.hashCode()).isEqualTo(clientDeliveryAddress2.hashCode());
+        assertThat(clientDeliveryAddress1.hashCode()).hasSameHashCodeAs(clientDeliveryAddress2.hashCode());
         assertThat(clientDeliveryAddress1.hashCode()).isNotEqualTo(clientDeliveryAddress3.hashCode());
     }
 
