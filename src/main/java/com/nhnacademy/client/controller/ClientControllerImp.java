@@ -162,19 +162,19 @@ public class ClientControllerImp implements ClientController {
     @Override
     @ExceptionHandler(ClientEmailDuplicatesException.class)
     public ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e) {
-        return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     @Override
     @ExceptionHandler(NotFoundClientException.class)
     public ResponseEntity<ClientRegisterResponseDto> handleException(NotFoundClientException e) {
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @Override
     @ExceptionHandler(ClientAuthenticationFailedException.class)
     public ResponseEntity<ClientLoginResponseDto> handleException(ClientAuthenticationFailedException e) {
-        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @Override
@@ -186,6 +186,6 @@ public class ClientControllerImp implements ClientController {
     @Override
     @ExceptionHandler(ClientAddressOutOfRangeException.class)
     public ResponseEntity<String> handleException(ClientAddressOutOfRangeException e) {
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }
