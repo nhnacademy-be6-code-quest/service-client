@@ -30,6 +30,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ClientServiceImp implements ClientService {
+    private final String SUCCESS_MESSAGE = "Success";
+
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, String> redisTemplate;
@@ -86,7 +88,7 @@ public class ClientServiceImp implements ClientService {
                 .client(client)
                 .role(roleRepository.findByRoleName("ROLE_OAUTH"))
                 .build());
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -191,7 +193,7 @@ public class ClientServiceImp implements ClientService {
                         .clientDeliveryAddress(clientRegisterAddressDto.getClientDeliveryAddress())
                         .clientDeliveryAddressDetail(clientRegisterAddressDto.getClientDeliveryAddressDetail())
                 .build());
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -203,19 +205,19 @@ public class ClientServiceImp implements ClientService {
                         .client(client)
                         .clientPhoneNumber(clientPhoneNumberResponseDto.getPhoneNumber())
                 .build());
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
     public String deleteAddress(Long addressId) {
         clientDeliveryAddressRepository.deleteById(addressId);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
     public String deletePhoneNumber(Long phoneNumberId) {
         clientNumberRepository.deleteById(phoneNumberId);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -228,7 +230,7 @@ public class ClientServiceImp implements ClientService {
         client.setDeleted(true);
         client.setClientDeleteDate(LocalDateTime.now());
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -238,7 +240,7 @@ public class ClientServiceImp implements ClientService {
         client.setClientName(name);
         client.setClientBirth(birth);
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -250,7 +252,7 @@ public class ClientServiceImp implements ClientService {
         }
         client.setClientPassword(passwordEncoder.encode(password));
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -263,7 +265,7 @@ public class ClientServiceImp implements ClientService {
         }
         client.setDeleted(false);
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
@@ -274,7 +276,7 @@ public class ClientServiceImp implements ClientService {
         }
         client.setDeleted(false);
         clientRepository.save(client);
-        return "Success";
+        return SUCCESS_MESSAGE;
     }
 
     @Override
