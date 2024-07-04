@@ -9,6 +9,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,16 +21,16 @@ public class HeaderFilter extends OncePerRequestFilter {
     private final String[] requiredRole;
     private final AntPathMatcher pathMatcher;
 
-    public HeaderFilter(String requiredPath, String requiredMethod) {
+    public HeaderFilter(URI requiredPath, String requiredMethod) {
         this.requiredRole = new String[0];
-        this.requiredPath = requiredPath;
+        this.requiredPath = requiredPath.getPath();
         this.requiredMethod = requiredMethod;
         this.pathMatcher = new AntPathMatcher();
     }
 
-    public HeaderFilter(String requiredPath, String requiredMethod, String... requiredRole) {
+    public HeaderFilter(URI requiredPath, String requiredMethod, String... requiredRole) {
         this.requiredRole = requiredRole;
-        this.requiredPath = requiredPath;
+        this.requiredPath = requiredPath.getPath();
         this.requiredMethod = requiredMethod;
         this.pathMatcher = new AntPathMatcher();
     }

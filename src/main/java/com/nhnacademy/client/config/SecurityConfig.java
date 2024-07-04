@@ -13,11 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.net.URI;
+
 @Configuration
 public class SecurityConfig {
-    private static final String CLIENT_PATH = "/api/client";
-    private static final String CLIENT_ADDRESS_PATH = "/api/client/address";
-    private static final String CLIENT_PHONE_PATH = "/api/client/phone";
+    private final URI clientPath = URI.create("/api/client");
+    private final URI clientAddressPath = URI.create("/api/client/address");
+    private final URI clientPhonePath = URI.create("/api/client/phone");
     private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
     @Bean
@@ -28,17 +30,17 @@ public class SecurityConfig {
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(req -> req.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new HeaderFilter(CLIENT_PATH, HttpMethod.GET.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter(CLIENT_PATH, HttpMethod.DELETE.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter(CLIENT_PATH, HttpMethod.PUT.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter(CLIENT_ADDRESS_PATH, HttpMethod.GET.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter(CLIENT_ADDRESS_PATH, HttpMethod.POST.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter(CLIENT_ADDRESS_PATH, HttpMethod.DELETE.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter(CLIENT_PHONE_PATH, HttpMethod.GET.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter(CLIENT_PHONE_PATH, HttpMethod.POST.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter(CLIENT_PHONE_PATH, HttpMethod.DELETE.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter(CLIENT_PHONE_PATH, HttpMethod.GET.name()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new HeaderFilter("/api/client/coupon-payment", HttpMethod.GET.name(), ADMIN_ROLE), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new HeaderFilter(clientPath, HttpMethod.GET.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(clientPath, HttpMethod.DELETE.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(clientPath, HttpMethod.PUT.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(clientAddressPath, HttpMethod.GET.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(clientAddressPath, HttpMethod.POST.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(clientAddressPath, HttpMethod.DELETE.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(clientPhonePath, HttpMethod.GET.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(clientPhonePath, HttpMethod.POST.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(clientPhonePath, HttpMethod.DELETE.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(clientPhonePath, HttpMethod.GET.name()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new HeaderFilter(URI.create("/api/client/coupon-payment"), HttpMethod.GET.name(), ADMIN_ROLE), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
