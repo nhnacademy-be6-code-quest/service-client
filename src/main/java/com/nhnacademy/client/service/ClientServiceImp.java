@@ -30,8 +30,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ClientServiceImp implements ClientService {
-    private final String NOT_FOUND_MESSAGE = "Not found : ";
-    private final String SUCCESS_MESSAGE = "Success";
+    private static final String NOT_FOUND_MESSAGE = "Not found : ";
+    private static final String SUCCESS_MESSAGE = "Success";
 
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
