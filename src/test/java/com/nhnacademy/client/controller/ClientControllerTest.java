@@ -73,6 +73,22 @@ class ClientControllerTest {
     }
 
     @Test
+    void testCreateOauthClient() throws Exception {
+        ClientOAuthRegisterRequestDto requestDto = new ClientOAuthRegisterRequestDto(
+                "oauthClientId",
+                "oauthClientSecret",
+                LocalDate.now()
+        );
+        when(clientService.oauthRegister(any(ClientOAuthRegisterRequestDto.class))).thenReturn("Success");
+
+        mockMvc.perform(post("/api/oauth/client")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success"));
+    }
+
+    @Test
     void testLogin() throws Exception {
         String email = "test@example.com";
         ClientLoginResponseDto responseDto = ClientLoginResponseDto.builder()
@@ -290,33 +306,6 @@ class ClientControllerTest {
     }
 
     @Test
-    void testHandleNotFoundClientException() throws Exception {
-        doThrow(new NotFoundClientException("Not found")).when(clientService).privacy(anyLong());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(ID_HEADER, "1");
-
-        mockMvc.perform(get("/api/client")
-                        .header(ID_HEADER, "1"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void testHandleClientAuthenticationFailedException() throws Exception {
-        doThrow(new ClientAuthenticationFailedException("Unauthorized")).when(clientService).deleteClient(anyLong(), any(String.class));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(ID_HEADER, "1");
-        headers.add(PASSWORD_HEADER, "password");
-
-        mockMvc.perform(delete("/api/client")
-                        .header(ID_HEADER, "1")
-                        .header(PASSWORD_HEADER, "password"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    // 추가된 함수에 대한 테스트
-    @Test
     void testChangePasswordClient() throws Exception {
         ClientChangePasswordRequestDto requestDto = new ClientChangePasswordRequestDto(
                 "test@example.com", "newPassword123", "token123");
@@ -371,5 +360,74 @@ class ClientControllerTest {
                 .andExpect(jsonPath("$[0]").value(clientIds.get(0)))
                 .andExpect(jsonPath("$[1]").value(clientIds.get(1)))
                 .andExpect(jsonPath("$[2]").value(clientIds.get(2)));
+    }
+
+    @Test
+    void testHandleClientEmailDuplicatesException() throws Exception {
+        doThrow(new ClientEmailDuplicatesException()).when(clientService).register(any(ClientRegisterRequestDto.class));
+
+        ClientRegisterRequestDto requestDto = new ClientRegisterRequestDto(
+                "test@example.com", "qwer1234@", "johndoe", LocalDate.of(1990, 1, 1), "01012345678");
+
+        mockMvc.perform(post("/api/client")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void testHandleNotFoundClientException() throws Exception {
+        doThrow(new NotFoundClientException("Not found")).when(clientService).privacy(anyLong());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(ID_HEADER, "1");
+
+        mockMvc.perform(get("/api/client")
+                        .header(ID_HEADER, "1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testHandleClientAuthenticationFailedException() throws Exception {
+        doThrow(new ClientAuthenticationFailedException("Unauthorized")).when(clientService).deleteClient(anyLong(), any(String.class));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(ID_HEADER, "1");
+        headers.add(PASSWORD_HEADER, "password");
+
+        mockMvc.perform(delete("/api/client")
+                        .header(ID_HEADER, "1")
+                        .header(PASSWORD_HEADER, "password"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testHandleClientDeletedException() throws Exception {
+        doThrow(new ClientDeletedException("Gone")).when(clientService).login(any(String.class));
+
+        mockMvc.perform(get("/api/client/login")
+                        .param("email", "test@example.com"))
+                .andExpect(status().isGone());
+    }
+
+    @Test
+    void testHandleClientAddressOutOfRangeException() throws Exception {
+        doThrow(new ClientAddressOutOfRangeException("Bad Request")).when(clientService).registerAddress(any(ClientRegisterAddressRequestDto.class), anyLong());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(ID_HEADER, "1");
+
+        ClientRegisterAddressRequestDto requestDto = ClientRegisterAddressRequestDto.builder()
+                .clientDeliveryAddress("123 Main St")
+                .clientDeliveryAddressDetail("Apt 4B")
+                .clientDeliveryAddressNickname("Home")
+                .clientDeliveryZipCode(12345)
+                .build();
+
+        mockMvc.perform(post("/api/client/address")
+                        .header(ID_HEADER, "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isBadRequest());
     }
 }
