@@ -63,7 +63,7 @@ class ClientChangePasswordRequestDtoTest {
         ClientChangePasswordRequestDto dto = new ClientChangePasswordRequestDto("test@example.com", "token", null);
         Set<jakarta.validation.ConstraintViolation<ClientChangePasswordRequestDto>> violations = validator.validate(dto);
 
-        assertThat(violations).anyMatch(violation -> violation.getMessage().contains("널이어서는 안됩니다"));
+        assertThat(violations).anyMatch(violation -> violation.getMessage().contains("비밀번호는 필수 입력 값입니다"));
     }
 
     @Test
