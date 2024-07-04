@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class ClientChangePasswordRequestDtoTest {
+class ClientChangePasswordRequestDtoTest {
 
     private Validator validator;
 
