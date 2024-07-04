@@ -10,7 +10,6 @@ import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
 import com.nhnacademy.client.entity.*;
 import com.nhnacademy.client.exception.*;
 import com.nhnacademy.client.repository.*;
-import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -247,7 +246,7 @@ public class ClientServiceImp implements ClientService {
         Client client = clientRepository.findByClientEmail(email);
         checkByEmail(client, email);
         if (redisTemplate.opsForHash().get("change-password", token) == null) {
-            throw new BadRequestException("Invalid token");
+            throw new ClientAuthenticationFailedException("client token does not exist");
         }
         client.setClientPassword(passwordEncoder.encode(password));
         clientRepository.save(client);
@@ -260,7 +259,7 @@ public class ClientServiceImp implements ClientService {
         if (client == null) {
             throw new NotFoundClientException("Not found : " + email);
         } else if (redisTemplate.opsForHash().get("recovery-account", token) == null) {
-            throw new BadRequestException("Invalid token");
+            throw new ClientAuthenticationFailedException("client token does not exist");
         }
         client.setDeleted(false);
         clientRepository.save(client);
