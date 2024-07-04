@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -130,7 +129,6 @@ class ClientControllerTest {
     void testGetCouponPayments() throws Exception {
         int page = 0;
         int size = 10;
-        PageRequest pageRequest = PageRequest.of(page, size);
 
         ClientCouponPaymentResponseDto clientCouponPaymentResponseDto = ClientCouponPaymentResponseDto.builder()
                 .clientId(1L)

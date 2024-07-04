@@ -30,8 +30,8 @@ class ClientGradeRepositoryTest {
 
         assertThat(clientGrade).isNotNull();
         assertThat(clientGrade.getClientGradeName()).isEqualTo("common");
-        assertThat(clientGrade.getClientPolicyBoundry()).isEqualTo(0);
-        assertThat(clientGrade.getRate()).isEqualTo(0);
+        assertThat(clientGrade.getClientPolicyBoundry()).isZero();
+        assertThat(clientGrade.getRate()).isZero();
     }
 
     @Test

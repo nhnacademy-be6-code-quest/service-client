@@ -70,7 +70,7 @@ class ClientRegisterAddressRequestDtoTest {
         assertThat(dto.getClientDeliveryAddress()).isNull();
         assertThat(dto.getClientDeliveryAddressDetail()).isNull();
         assertThat(dto.getClientDeliveryAddressNickname()).isNull();
-        assertThat(dto.getClientDeliveryZipCode()).isEqualTo(0);
+        assertThat(dto.getClientDeliveryZipCode()).isZero();
     }
 
     @Test

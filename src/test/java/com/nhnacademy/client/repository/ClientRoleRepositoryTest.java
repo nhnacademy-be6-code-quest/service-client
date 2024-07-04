@@ -55,8 +55,7 @@ class ClientRoleRepositoryTest {
     void testFindRolesByClient() {
         List<Role> roles = clientRoleRepository.findRolesByClient(client);
 
-        assertThat(roles).isNotNull();
-        assertThat(roles).hasSize(2);
+        assertThat(roles).isNotNull().hasSize(2);
         assertThat(roles).extracting("roleName").containsExactlyInAnyOrder("ROLE_USER", "ROLE_ADMIN");
     }
 }

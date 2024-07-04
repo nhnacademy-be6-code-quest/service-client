@@ -69,7 +69,7 @@ class ClientCouponPaymentResponseDtoTest {
                 .build();
 
         assertThat(dto1).isEqualTo(dto2);
-        assertThat(dto1.hashCode()).isEqualTo(dto2.hashCode());
+        assertThat(dto1.hashCode()).hasSameHashCodeAs(dto2.hashCode());
     }
 
     @Test
@@ -81,6 +81,6 @@ class ClientCouponPaymentResponseDtoTest {
                 .build();
 
         String expectedToString = "ClientCouponPaymentResponseDto(clientId=1, clientName=John Doe, clientEmail=john.doe@example.com)";
-        assertThat(dto.toString()).isEqualTo(expectedToString);
+        assertThat(dto.toString()).hasToString(expectedToString);
     }
 }

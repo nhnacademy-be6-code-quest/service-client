@@ -95,7 +95,7 @@ class RoleTest {
         // Then
         assertThat(role1).isEqualTo(role2);
         assertThat(role1).isNotEqualTo(role3);
-        assertThat(role1.hashCode()).isEqualTo(role2.hashCode());
+        assertThat(role1.hashCode()).hasSameHashCodeAs(role2.hashCode());
         assertThat(role1.hashCode()).isNotEqualTo(role3.hashCode());
     }
 

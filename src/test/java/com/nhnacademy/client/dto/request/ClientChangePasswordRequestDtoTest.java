@@ -79,7 +79,6 @@ class ClientChangePasswordRequestDtoTest {
         ClientChangePasswordRequestDto dto = new ClientChangePasswordRequestDto("test@example.com", "token", "password");
         Set<jakarta.validation.ConstraintViolation<ClientChangePasswordRequestDto>> violations = validator.validate(dto);
 
-        assertThat(violations).hasSize(1);
-        assertThat(violations).anyMatch(violation -> violation.getMessage().contains("비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요"));
+        assertThat(violations).hasSize(1).anyMatch(violation -> violation.getMessage().contains("비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요"));
     }
 }

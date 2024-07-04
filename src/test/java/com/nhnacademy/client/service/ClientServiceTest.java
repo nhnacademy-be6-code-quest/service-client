@@ -154,7 +154,6 @@ class ClientServiceTest {
         // Given
         int page = 0;
         int size = 10;
-        PageRequest pageRequest = PageRequest.of(page, size);
         Client client = new Client(1L, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         Page<Client> clientPage = new PageImpl<>(List.of(client));
         when(clientRepository.findAll(any(PageRequest.class))).thenReturn(clientPage);
@@ -180,8 +179,7 @@ class ClientServiceTest {
         List<ClientDeliveryAddressResponseDto> response = clientService.deliveryAddress(id);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response).hasSize(1);
+        assertThat(response).isNotNull().hasSize(1);
     }
 
     @Test
@@ -208,8 +206,7 @@ class ClientServiceTest {
         List<ClientPhoneNumberResponseDto> response = clientService.getPhoneNumbers(id);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response).hasSize(1);
+        assertThat(response).isNotNull().hasSize(1);
     }
 
     @Test
@@ -430,6 +427,7 @@ class ClientServiceTest {
     }
 
     @Test
+    @SuppressWarnings("java:S1874")
     void testReceiveMessage_ThrowsRabbitMessageConvertException() throws IOException {
         // Given
         String message = "invalid message";
@@ -537,7 +535,6 @@ class ClientServiceTest {
         List<Long> response = clientService.getThisMonthBirthClient();
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response).hasSize(3);
+        assertThat(response).isNotNull().hasSize(3);
     }
 }

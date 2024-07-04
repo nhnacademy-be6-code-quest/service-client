@@ -55,8 +55,7 @@ class ClientNumberRepositoryTest {
     void testFindAllByClient() {
         List<ClientNumber> clientNumbers = clientNumberRepository.findAllByClient(client);
 
-        assertThat(clientNumbers).isNotNull();
-        assertThat(clientNumbers).hasSize(2);
+        assertThat(clientNumbers).isNotNull().hasSize(2);
         assertThat(clientNumbers).extracting("clientPhoneNumber").containsExactlyInAnyOrder("123-456-7890", "098-765-4321");
     }
 }

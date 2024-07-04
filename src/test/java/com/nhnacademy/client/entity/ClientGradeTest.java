@@ -104,7 +104,7 @@ class ClientGradeTest {
         // Then
         assertThat(clientGrade1).isEqualTo(clientGrade2);
         assertThat(clientGrade1).isNotEqualTo(clientGrade3);
-        assertThat(clientGrade1.hashCode()).isEqualTo(clientGrade2.hashCode());
+        assertThat(clientGrade1.hashCode()).hasSameHashCodeAs(clientGrade2.hashCode());
         assertThat(clientGrade1.hashCode()).isNotEqualTo(clientGrade3.hashCode());
     }
 

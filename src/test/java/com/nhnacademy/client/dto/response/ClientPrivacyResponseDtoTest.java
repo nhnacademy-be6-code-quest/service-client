@@ -59,7 +59,7 @@ class ClientPrivacyResponseDtoTest {
                 .build();
 
         assertThat(dto1).isEqualTo(dto2);
-        assertThat(dto1.hashCode()).isEqualTo(dto2.hashCode());
+        assertThat(dto1.hashCode()).hasSameHashCodeAs(dto2.hashCode());
     }
 
     @Test
@@ -72,6 +72,6 @@ class ClientPrivacyResponseDtoTest {
                 .build();
 
         String expectedToString = "ClientPrivacyResponseDto(clientGrade=VIP, clientEmail=test@example.com, clientName=John Doe, clientBirth=1990-01-01)";
-        assertThat(dto.toString()).isEqualTo(expectedToString);
+        assertThat(dto.toString()).hasToString(expectedToString);
     }
 }

@@ -46,8 +46,7 @@ class ClientDeliveryAddressRepositoryTest {
     void testFindAllByClient() {
         List<ClientDeliveryAddress> addresses = clientDeliveryAddressRepository.findAllByClient(client);
 
-        assertThat(addresses).isNotNull();
-        assertThat(addresses).hasSize(2);
+        assertThat(addresses).isNotNull().hasSize(2);
 
         ClientDeliveryAddress address1 = addresses.get(0);
         assertThat(address1.getClientDeliveryAddress()).isEqualTo("123 Main St");
