@@ -30,7 +30,7 @@ class ClientDeliveryAddressRepositoryTest {
     @BeforeEach
     void setUp() {
         ClientGrade clientGrade = new ClientGrade(1L, "common", 0, 0);
-        client = new Client(1L, clientGrade, "test@example.com", "password", "John Doe",
+        client = new Client(1L, clientGrade, "test1@example.com", "password", "John Doe",
                 LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
 
         clientRepository.save(client);
