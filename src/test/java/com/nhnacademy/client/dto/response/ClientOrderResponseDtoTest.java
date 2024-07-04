@@ -10,9 +10,8 @@ class ClientOrderResponseDtoTest {
 
     @Test
     void testBuilder() {
-        // Given
         Long clientId = 1L;
-        String clientName = "John Doe";
+        String clientName = "Test User";
         List<String> clientNumbers = List.of("123-456-7890");
         List<ClientDeliveryAddressResponseDto> deliveryAddresses = List.of(
                 ClientDeliveryAddressResponseDto.builder()
@@ -24,7 +23,6 @@ class ClientOrderResponseDtoTest {
                         .build()
         );
 
-        // When
         ClientOrderResponseDto dto = ClientOrderResponseDto.builder()
                 .clientId(clientId)
                 .clientName(clientName)
@@ -32,7 +30,6 @@ class ClientOrderResponseDtoTest {
                 .deliveryAddresses(deliveryAddresses)
                 .build();
 
-        // Then
         assertThat(dto.getClientId()).isEqualTo(clientId);
         assertThat(dto.getClientName()).isEqualTo(clientName);
         assertThat(dto.getClientNumbers()).isEqualTo(clientNumbers);
@@ -40,10 +37,8 @@ class ClientOrderResponseDtoTest {
     }
 
     @Test
-    void testGetterAndSetter() {
-        // Given
-        Long clientId = 1L;
-        String clientName = "John Doe";
+    void testSettersAndGetters() {
+        ClientOrderResponseDto dto = ClientOrderResponseDto.builder().build();
         List<String> clientNumbers = List.of("123-456-7890");
         List<ClientDeliveryAddressResponseDto> deliveryAddresses = List.of(
                 ClientDeliveryAddressResponseDto.builder()
@@ -55,18 +50,69 @@ class ClientOrderResponseDtoTest {
                         .build()
         );
 
-        // When
-        ClientOrderResponseDto dto = ClientOrderResponseDto.builder()
-                .clientId(clientId)
-                .clientName(clientName)
+        dto.setClientId(1L);
+        dto.setClientName("Test User");
+        dto.setClientNumbers(clientNumbers);
+        dto.setDeliveryAddresses(deliveryAddresses);
+
+        assertThat(dto.getClientId()).isEqualTo(1L);
+        assertThat(dto.getClientName()).isEqualTo("Test User");
+        assertThat(dto.getClientNumbers()).isEqualTo(clientNumbers);
+        assertThat(dto.getDeliveryAddresses()).isEqualTo(deliveryAddresses);
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+        List<String> clientNumbers = List.of("123-456-7890");
+        List<ClientDeliveryAddressResponseDto> deliveryAddresses = List.of(
+                ClientDeliveryAddressResponseDto.builder()
+                        .clientDeliveryAddressId(1L)
+                        .clientDeliveryAddress("123 Main St")
+                        .clientDeliveryAddressDetail("Apt 4B")
+                        .clientDeliveryAddressNickname("Home")
+                        .clientDeliveryZipCode(12345)
+                        .build()
+        );
+
+        ClientOrderResponseDto dto1 = ClientOrderResponseDto.builder()
+                .clientId(1L)
+                .clientName("Test User")
                 .clientNumbers(clientNumbers)
                 .deliveryAddresses(deliveryAddresses)
                 .build();
 
-        // Then
-        assertThat(dto.getClientId()).isEqualTo(clientId);
-        assertThat(dto.getClientName()).isEqualTo(clientName);
-        assertThat(dto.getClientNumbers()).isEqualTo(clientNumbers);
-        assertThat(dto.getDeliveryAddresses()).isEqualTo(deliveryAddresses);
+        ClientOrderResponseDto dto2 = ClientOrderResponseDto.builder()
+                .clientId(1L)
+                .clientName("Test User")
+                .clientNumbers(clientNumbers)
+                .deliveryAddresses(deliveryAddresses)
+                .build();
+
+        assertThat(dto1).isEqualTo(dto2);
+        assertThat(dto1.hashCode()).isEqualTo(dto2.hashCode());
+    }
+
+    @Test
+    void testToString() {
+        List<String> clientNumbers = List.of("123-456-7890");
+        List<ClientDeliveryAddressResponseDto> deliveryAddresses = List.of(
+                ClientDeliveryAddressResponseDto.builder()
+                        .clientDeliveryAddressId(1L)
+                        .clientDeliveryAddress("123 Main St")
+                        .clientDeliveryAddressDetail("Apt 4B")
+                        .clientDeliveryAddressNickname("Home")
+                        .clientDeliveryZipCode(12345)
+                        .build()
+        );
+
+        ClientOrderResponseDto dto = ClientOrderResponseDto.builder()
+                .clientId(1L)
+                .clientName("Test User")
+                .clientNumbers(clientNumbers)
+                .deliveryAddresses(deliveryAddresses)
+                .build();
+
+        String expectedToString = "ClientOrderResponseDto(clientId=1, clientName=Test User, clientNumbers=[123-456-7890], deliveryAddresses=[ClientDeliveryAddressResponseDto(clientDeliveryAddressId=1, clientDeliveryAddress=123 Main St, clientDeliveryAddressDetail=Apt 4B, clientDeliveryAddressNickname=Home, clientDeliveryZipCode=12345)])";
+        assertThat(dto.toString()).isEqualTo(expectedToString);
     }
 }
