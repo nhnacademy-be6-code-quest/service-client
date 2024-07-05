@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -52,6 +53,8 @@ class ClientServiceTest {
     private RedisTemplate<String, String> redisTemplate;
     @Mock
     private HashOperations<String, Object, Object> hashOperations;
+    @Mock
+    private RabbitTemplate rabbitTemplate;
 
     @InjectMocks
     private ClientServiceImp clientService;
