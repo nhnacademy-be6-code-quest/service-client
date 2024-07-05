@@ -22,6 +22,13 @@ public class RabbitConfig {
     @Value("${rabbit.login.routing.key}")
     private String loginRoutingKey;
 
+    @Value("${rabbit.register.exchange.name}")
+    private String registerExchangeName;
+    @Value("${rabbit.register.queue.name}")
+    private String registerQueueName;
+    @Value("${rabbit.register.routing.key}")
+    private String registerRoutingKey;
+
     @Bean
     DirectExchange loginExchange() {
         return new DirectExchange(loginExchangeName);
@@ -33,8 +40,23 @@ public class RabbitConfig {
     }
 
     @Bean
-    Binding loginBinding(Queue queue, DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(loginRoutingKey);
+    Binding loginBinding(Queue loginQueue, DirectExchange loginExchange) {
+        return BindingBuilder.bind(loginQueue).to(loginExchange).with(loginRoutingKey);
+    }
+
+    @Bean
+    DirectExchange registerExchange() {
+        return new DirectExchange(registerExchangeName);
+    }
+
+    @Bean
+    Queue registerQueue() {
+        return new Queue(registerQueueName);
+    }
+
+    @Bean
+    Binding registerBinding(Queue registerQueue, DirectExchange registerExchange) {
+        return BindingBuilder.bind(registerQueue).to(registerExchange).with(registerRoutingKey);
     }
 
     @Bean

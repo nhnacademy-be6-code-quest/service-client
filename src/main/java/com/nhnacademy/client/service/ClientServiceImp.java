@@ -2,6 +2,7 @@ package com.nhnacademy.client.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.client.dto.message.ClientLoginMessageDto;
+import com.nhnacademy.client.dto.message.SignUpClientMessageDto;
 import com.nhnacademy.client.dto.request.ClientOAuthRegisterRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
 import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
@@ -13,6 +14,8 @@ import com.nhnacademy.client.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -35,6 +38,7 @@ public class ClientServiceImp implements ClientService {
 
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RabbitTemplate rabbitTemplate;
     private final RedisTemplate<String, String> redisTemplate;
 
     private final RoleRepository roleRepository;
@@ -43,6 +47,11 @@ public class ClientServiceImp implements ClientService {
     private final ClientGradeRepository clientGradeRepository;
     private final ClientNumberRepository clientNumberRepository;
     private final ClientDeliveryAddressRepository clientDeliveryAddressRepository;
+
+    @Value("${rabbit.register.exchange.name}")
+    private String registerExchangeName;
+    @Value("${rabbit.register.routing.key}")
+    private String registerRoutingKey;
 
     @Override
     public ClientRegisterResponseDto register(ClientRegisterRequestDto registerInfo) {
@@ -69,6 +78,7 @@ public class ClientServiceImp implements ClientService {
                         .client(client)
                         .role(roleRepository.findByRoleName("ROLE_USER"))
                 .build());
+        rabbitTemplate.convertAndSend(registerExchangeName, registerRoutingKey, new SignUpClientMessageDto(client.getClientId()));
         return new ClientRegisterResponseDto(client.getClientEmail(), client.getClientCreatedAt());
     }
 
