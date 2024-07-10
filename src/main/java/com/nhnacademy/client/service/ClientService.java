@@ -183,7 +183,17 @@ public interface ClientService {
     /**
      * 로그인 시간을 업데이트하는 함수입니다.
      *
+     * @author gihwanJang
      * @param message 유저의 id와 로그인 시간입니다.
      */
     void receiveMessage(String message);
+
+    /**
+     * 유저 id를 받아 유저 이름을 반환하는 함수입니다.
+     *
+     * @author gihwanJang
+     * @param clientId 유저를 식별하는 인자입니다.
+     * @return 유저 이름
+     */
+    ClientNameResponseDto getClientName(Long clientId);
 }

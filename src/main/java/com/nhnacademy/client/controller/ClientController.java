@@ -362,6 +362,19 @@ public interface ClientController {
     @GetMapping("/api/client/birth-coupon")
     ResponseEntity<List<Long>> getThisMonthBirthClient();
 
+    @Operation(
+            summary = "유저 이름 단건 조회",
+            description = "admin point - 유저 이름 단건 조회",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "유저 이름"
+                    )
+            }
+    )
+    @GetMapping("/api/client/name")
+    ResponseEntity<ClientNameResponseDto> getClientName(@RequestParam Long clientId);
+
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
 
     ResponseEntity<ClientRegisterResponseDto> handleException(NotFoundClientException e);

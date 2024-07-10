@@ -314,6 +314,15 @@ public class ClientServiceImp implements ClientService {
         clientRepository.save(client);
     }
 
+    @Override
+    public ClientNameResponseDto getClientName(Long clientId) {
+        Client client = clientRepository.findById(clientId).orElse(null);
+        checkById(client, clientId);
+        return ClientNameResponseDto.builder()
+                .clientName(client.getClientName())
+                .build();
+    }
+
     private void checkByEmail(Client client, String email) {
         if (client == null) {
             throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);

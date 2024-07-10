@@ -8,6 +8,7 @@ import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.entity.*;
 import com.nhnacademy.client.exception.*;
 import com.nhnacademy.client.repository.*;
+import jakarta.ws.rs.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -539,5 +540,32 @@ class ClientServiceTest {
 
         // Then
         assertThat(response).isNotNull().hasSize(3);
+    }
+
+    @Test
+    void testGetClientName() {
+        // Given
+        Client client = Client.builder()
+                .clientId(1L)
+                .clientName("tester")
+                .build();
+
+        // When
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(client));
+
+        // Then
+        assertThat(clientService.getClientName(1L).getClientName()).isEqualTo(client.getClientName());
+    }
+
+    @Test
+    void testGetClientName_ThrowsNotFoundException() {
+        // Given
+        Long id = 1L;
+
+        // When
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // Then
+        assertThatThrownBy(() -> clientService.getClientName(id)).isInstanceOf(NotFoundClientException.class);
     }
 }
