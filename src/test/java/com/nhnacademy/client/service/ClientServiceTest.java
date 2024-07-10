@@ -568,4 +568,32 @@ class ClientServiceTest {
         // Then
         assertThatThrownBy(() -> clientService.getClientName(id)).isInstanceOf(NotFoundClientException.class);
     }
+
+    @Test
+    void testGetClientGrade() {
+        // Given
+        Client client = Client.builder()
+                .clientId(1L)
+                .clientName("tester")
+                .clientGrade(new ClientGrade(1L, "t", 0, 1))
+                .build();
+
+        //When
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(client));
+
+        //Then
+        assertThat(clientService.getClientGradeRate(1L).getRate()).isEqualTo(client.getClientGrade().getRate());
+    }
+
+    @Test
+    void testGetClientGrade_ThrowsNotFoundException() {
+        // Given
+        Long id = 1L;
+
+        //When
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        //Then
+        assertThatThrownBy(() -> clientService.getClientGradeRate(id)).isInstanceOf(NotFoundClientException.class);
+    }
 }

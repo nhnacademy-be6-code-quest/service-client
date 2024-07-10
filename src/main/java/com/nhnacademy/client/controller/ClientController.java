@@ -375,6 +375,19 @@ public interface ClientController {
     @GetMapping("/api/client/name")
     ResponseEntity<ClientNameResponseDto> getClientName(@RequestParam Long clientId);
 
+    @Operation(
+            summary = "유저 적립률 단건 조회",
+            description = "user point - 유저 적립률 단건 조회",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "유저 적립률"
+                    )
+            }
+    )
+    @GetMapping("/api/client/grade")
+    ResponseEntity<ClientGradeRateResponseDto> getClientGradeRate(@RequestParam Long clientId);
+
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
 
     ResponseEntity<ClientRegisterResponseDto> handleException(NotFoundClientException e);

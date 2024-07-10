@@ -449,4 +449,23 @@ class ClientControllerTest {
         mockMvc.perform(get("/api/client/name?clientId=1"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void testGetClientGradeRate() throws Exception {
+        ClientGradeRateResponseDto clientGradeRateResponseDto = new ClientGradeRateResponseDto(1);
+
+        when(clientService.getClientGradeRate(anyLong())).thenReturn(clientGradeRateResponseDto);
+
+        mockMvc.perform(get("/api/client/grade?clientId=1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rate").value(clientGradeRateResponseDto.getRate()));
+    }
+
+    @Test
+    void testGetClientGradeRate_throwsNotFound() throws Exception {
+        when(clientService.getClientGradeRate(anyLong())).thenThrow(new NotFoundClientException("Not found"));
+
+        mockMvc.perform(get("/api/client/grade?clientId=1"))
+                .andExpect(status().isNotFound());
+    }
 }

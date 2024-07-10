@@ -323,6 +323,13 @@ public class ClientServiceImp implements ClientService {
                 .build();
     }
 
+    @Override
+    public ClientGradeRateResponseDto getClientGradeRate(Long clientId) {
+        Client client = clientRepository.findById(clientId).orElse(null);
+        checkById(client, clientId);
+        return new ClientGradeRateResponseDto(client.getClientGrade().getRate());
+    }
+
     private void checkByEmail(Client client, String email) {
         if (client == null) {
             throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);
