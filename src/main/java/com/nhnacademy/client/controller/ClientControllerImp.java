@@ -160,6 +160,12 @@ public class ClientControllerImp implements ClientController {
     }
 
     @Override
+    public ResponseEntity<ClientNameResponseDto> getClientName(Long clientId) {
+        log.info("Get client name : {}", clientId);
+        return ResponseEntity.ok(clientService.getClientName(clientId));
+    }
+
+    @Override
     @ExceptionHandler(ClientEmailDuplicatesException.class)
     public ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
