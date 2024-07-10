@@ -160,6 +160,7 @@ public class ClientControllerImp implements ClientController {
     }
 
     @Override
+    @GetMapping("/api/client/name")
     public ResponseEntity<ClientNameResponseDto> getClientName(Long clientId) {
         log.info("Get client name : {}", clientId);
         return ResponseEntity.ok(clientService.getClientName(clientId));

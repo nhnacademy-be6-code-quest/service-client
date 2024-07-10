@@ -438,6 +438,15 @@ class ClientControllerTest {
         when(clientService.getClientName(anyLong())).thenReturn(clientNameResponseDto);
 
         mockMvc.perform(get("/api/client/name?clientId=1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.clientName").value(clientNameResponseDto.getClientName()));
+    }
+
+    @Test
+    void testGetClientName_throwsNotFound() throws Exception {
+        when(clientService.getClientName(anyLong())).thenThrow(new NotFoundClientException("Not found"));
+
+        mockMvc.perform(get("/api/client/name?clientId=1"))
+                .andExpect(status().isNotFound());
     }
 }
