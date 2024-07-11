@@ -167,6 +167,26 @@ public class ClientControllerImp implements ClientController {
     }
 
     @Override
+    public ResponseEntity<ClientGradeRateResponseDto> getClientGradeRate(Long clientId) {
+        log.info("Get client grade rate : {}", clientId);
+        return ResponseEntity.ok(clientService.getClientGradeRate(clientId));
+    }
+
+    @Override
+    public ResponseEntity<ClientRoleResponseDto> getClientRole(@RequestHeader HttpHeaders httpHeaders) {
+        log.info("Get client role : {}", httpHeaders.get("X-User-Role"));
+        return ResponseEntity.ok(ClientRoleResponseDto.builder()
+                .roles(httpHeaders.get("X-User-Role"))
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<Page<ClientPrivacyResponseDto>> getClientPrivacyPage(int page, int size, String sort, boolean desc) {
+        log.info("Get client privacy page : {}", page);
+        return ResponseEntity.ok(clientService.getClientPrivacyPage(page, size, sort, desc));
+    }
+
+    @Override
     @ExceptionHandler(ClientEmailDuplicatesException.class)
     public ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();

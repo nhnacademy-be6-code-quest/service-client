@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
@@ -448,5 +449,39 @@ class ClientControllerTest {
 
         mockMvc.perform(get("/api/client/name?clientId=1"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testGetClientGradeRate() throws Exception {
+        ClientGradeRateResponseDto clientGradeRateResponseDto = new ClientGradeRateResponseDto(1);
+
+        when(clientService.getClientGradeRate(anyLong())).thenReturn(clientGradeRateResponseDto);
+
+        mockMvc.perform(get("/api/client/grade?clientId=1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rate").value(clientGradeRateResponseDto.getRate()));
+    }
+
+    @Test
+    void testGetClientGradeRate_throwsNotFound() throws Exception {
+        when(clientService.getClientGradeRate(anyLong())).thenThrow(new NotFoundClientException("Not found"));
+
+        mockMvc.perform(get("/api/client/grade?clientId=1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testGetClientRole() throws Exception {
+        List<String> list = List.of("1", "2");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(ID_HEADER, "1");
+        headers.add("X-User-Role", "1");
+        headers.add("X-User-Role", "2");
+
+        mockMvc.perform(get("/api/client/role")
+                        .headers(headers))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.roles", containsInAnyOrder("1", "2")));
     }
 }

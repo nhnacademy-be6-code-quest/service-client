@@ -375,6 +375,50 @@ public interface ClientController {
     @GetMapping("/api/client/name")
     ResponseEntity<ClientNameResponseDto> getClientName(@RequestParam Long clientId);
 
+    @Operation(
+            summary = "유저 적립률 단건 조회",
+            description = "user point - 유저 적립률 단건 조회",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "유저 적립률"
+                    )
+            }
+    )
+    @GetMapping("/api/client/grade")
+    ResponseEntity<ClientGradeRateResponseDto> getClientGradeRate(@RequestParam Long clientId);
+
+    @Operation(
+            summary = "로그인 한 유저의 권한 확인",
+            description = "user admin page - 유저 권한 확인",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "유저 권한"
+                    )
+            }
+    )
+    @GetMapping("/api/client/role")
+    ResponseEntity<ClientRoleResponseDto> getClientRole(@RequestHeader HttpHeaders httpHeaders);
+
+    @Operation(
+            summary = "유저들 개인정보 페이지를 반환",
+            description = "admin page - 유저 권한 확인",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "유저 개인정보 페이지"
+                    )
+            }
+    )
+    @GetMapping("/api/client/privacy-page")
+    ResponseEntity<Page<ClientPrivacyResponseDto>> getClientPrivacyPage(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sort,
+            @RequestParam boolean desc
+    );
+
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
 
     ResponseEntity<ClientRegisterResponseDto> handleException(NotFoundClientException e);

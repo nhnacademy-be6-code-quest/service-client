@@ -43,6 +43,10 @@ public class SecurityConfig {
                                 new HeaderFilter.RouteConfig(clientPhonePath, HttpMethod.POST.name(), Collections.emptyList()),
                                 new HeaderFilter.RouteConfig(clientPhonePath, HttpMethod.DELETE.name(), Collections.emptyList()),
                                 new HeaderFilter.RouteConfig(clientPhonePath, HttpMethod.GET.name(), Collections.emptyList()),
+                                new HeaderFilter.RouteConfig(URI.create("/api/client/rate"), HttpMethod.GET.name(), Collections.emptyList()),
+                                new HeaderFilter.RouteConfig(URI.create("/api/client/role"), HttpMethod.GET.name(), Collections.emptyList()),
+                                new HeaderFilter.RouteConfig(URI.create("/api/client/name"), HttpMethod.GET.name(), List.of(ADMIN_ROLE)),
+                                new HeaderFilter.RouteConfig(URI.create("/api/client/privacy-page"), HttpMethod.GET.name(), List.of(ADMIN_ROLE)),
                                 new HeaderFilter.RouteConfig(URI.create("/api/client/coupon-payment"), HttpMethod.GET.name(), List.of(ADMIN_ROLE))
                         )
                 ), UsernamePasswordAuthenticationFilter.class);
