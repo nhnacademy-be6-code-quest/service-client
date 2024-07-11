@@ -29,6 +29,13 @@ public class RabbitConfig {
     @Value("${rabbit.register.routing.key}")
     private String registerRoutingKey;
 
+    @Value("${rabbit.point.exchange.name}")
+    private String registerPointExchangeName;
+    @Value("${rabbit.point.queue.name}")
+    private String registerPointQueueName;
+    @Value("${rabbit.point.routing.key}")
+    private String registerPointRoutingKey;
+
     @Bean
     DirectExchange loginExchange() {
         return new DirectExchange(loginExchangeName);
@@ -57,6 +64,21 @@ public class RabbitConfig {
     @Bean
     Binding registerBinding(Queue registerQueue, DirectExchange registerExchange) {
         return BindingBuilder.bind(registerQueue).to(registerExchange).with(registerRoutingKey);
+    }
+
+    @Bean
+    DirectExchange registerPointExchange() {
+        return new DirectExchange(registerPointExchangeName);
+    }
+
+    @Bean
+    Queue registerPointQueue() {
+        return new Queue(registerPointQueueName);
+    }
+
+    @Bean
+    Binding registerPointBinding(Queue registerPointQueue, DirectExchange registerPointExchange) {
+        return BindingBuilder.bind(registerPointQueue).to(registerPointExchange).with(registerPointRoutingKey);
     }
 
     @Bean
