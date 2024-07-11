@@ -16,10 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,6 +53,11 @@ public class ClientServiceImp implements ClientService {
     @Value("${rabbit.register.routing.key}")
     private String registerRoutingKey;
 
+    @Value("${rabbit.point.exchange.name}")
+    private String registerPointExchangeName;
+    @Value("${rabbit.point.routing.key}")
+    private String registerPointRoutingKey;
+
     @Override
     public ClientRegisterResponseDto register(ClientRegisterRequestDto registerInfo) {
         if (clientRepository.findByClientEmail(registerInfo.getClientEmail()) != null) {
@@ -81,6 +84,7 @@ public class ClientServiceImp implements ClientService {
                         .role(roleRepository.findByRoleName("ROLE_USER"))
                 .build());
         rabbitTemplate.convertAndSend(registerExchangeName, registerRoutingKey, new SignUpClientMessageDto(client.getClientId()));
+        rabbitTemplate.convertAndSend(registerPointExchangeName, registerPointRoutingKey, new SignUpClientMessageDto(client.getClientId()));
         return new ClientRegisterResponseDto(client.getClientEmail(), client.getClientCreatedAt());
     }
 
@@ -101,6 +105,8 @@ public class ClientServiceImp implements ClientService {
                 .client(client)
                 .role(roleRepository.findByRoleName("ROLE_OAUTH"))
                 .build());
+        rabbitTemplate.convertAndSend(registerExchangeName, registerRoutingKey, new SignUpClientMessageDto(client.getClientId()));
+        rabbitTemplate.convertAndSend(registerPointExchangeName, registerPointRoutingKey, new SignUpClientMessageDto(client.getClientId()));
         return SUCCESS_MESSAGE;
     }
 
