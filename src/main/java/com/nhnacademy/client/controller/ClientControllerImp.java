@@ -187,6 +187,12 @@ public class ClientControllerImp implements ClientController {
     }
 
     @Override
+    public ResponseEntity<String> updateClientGrade(ClientUpdateGradeRequestDto clientUpdateGradeRequestDto) {
+        log.info("Update client grade : {}", clientUpdateGradeRequestDto.getClientId());
+        return ResponseEntity.ok(clientService.updateClientGrade(clientUpdateGradeRequestDto.getClientId(), clientUpdateGradeRequestDto.getPayment()));
+    }
+
+    @Override
     @ExceptionHandler(ClientEmailDuplicatesException.class)
     public ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();

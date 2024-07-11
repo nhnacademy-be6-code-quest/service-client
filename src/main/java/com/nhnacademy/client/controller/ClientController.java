@@ -419,6 +419,19 @@ public interface ClientController {
             @RequestParam boolean desc
     );
 
+    @Operation(
+            summary = "유저의 등급 업데이트",
+            description = "payment page - 유저 등급 갱신",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공 여부 반환"
+                    )
+            }
+    )
+    @PutMapping("/api/client/grade")
+    ResponseEntity<String> updateClientGrade(@RequestBody ClientUpdateGradeRequestDto clientUpdateGradeRequestDto);
+
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
 
     ResponseEntity<ClientRegisterResponseDto> handleException(NotFoundClientException e);

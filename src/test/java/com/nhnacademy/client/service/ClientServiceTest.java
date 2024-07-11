@@ -637,4 +637,64 @@ class ClientServiceTest {
         PageRequest expectedPageRequest = PageRequest.of(1, 5, Sort.by(Sort.Direction.ASC, "clientEmail"));
         verify(clientRepository).findAllLazy(expectedPageRequest);
     }
+
+    @Test
+    void testUpdateClientGrade_SuccessfulUpdate() {
+        // Given
+        Long clientId = 1L;
+        Long payment = 50000L;
+        ClientGrade oldGrade = new ClientGrade(1L, "Standard", 30000, 0);
+        ClientGrade newGrade = new ClientGrade(2L, "Premium", 50000, 0);
+
+        Client client = new Client();
+        client.setClientId(clientId);
+        client.setClientGrade(oldGrade);
+
+        when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
+        when(clientGradeRepository.findFirstByClientPolicyBoundryLessThanEqualOrderByClientPolicyBoundryDesc(payment)).thenReturn(newGrade);
+
+        // When
+        String result = clientService.updateClientGrade(clientId, payment);
+
+        // Then
+        assertThat(result).isEqualTo("success");
+        verify(clientRepository).save(client);
+        assertThat(client.getClientGrade()).isEqualTo(newGrade);
+    }
+
+    @Test
+    void testUpdateClientGrade_NoGradeChange() {
+        // Given
+        Long clientId = 1L;
+        Long payment = 20000L;
+        ClientGrade oldGrade = new ClientGrade(1L, "Standard", 30000, 0);
+
+        Client client = new Client();
+        client.setClientId(clientId);
+        client.setClientGrade(oldGrade);
+
+        when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
+        when(clientGradeRepository.findFirstByClientPolicyBoundryLessThanEqualOrderByClientPolicyBoundryDesc(payment)).thenReturn(oldGrade);
+
+        // When
+        String result = clientService.updateClientGrade(clientId, payment);
+
+        // Then
+        assertThat(result).isEqualTo("success");
+        verify(clientRepository, never()).save(client);
+    }
+
+    @Test
+    void testUpdateClientGrade_ClientNotFound() {
+        // Given
+        Long clientId = 1L;
+        Long payment = 50000L;
+
+        when(clientRepository.findById(clientId)).thenReturn(Optional.empty());
+
+        // Then
+        assertThatThrownBy(() -> clientService.updateClientGrade(clientId, payment))
+                .isInstanceOf(NotFoundClientException.class)
+                .hasMessageContaining("Not found : " + clientId);
+    }
 }

@@ -351,6 +351,21 @@ public class ClientServiceImp implements ClientService {
                 .build());
     }
 
+    @Override
+    public String updateClientGrade(Long clientId, Long payment) {
+        Client client = clientRepository.findById(clientId).orElse(null);
+        checkById(client, clientId);
+
+        ClientGrade newGrade = clientGradeRepository
+                .findFirstByClientPolicyBoundryLessThanEqualOrderByClientPolicyBoundryDesc(payment);
+
+        if (newGrade != null && !newGrade.equals(client.getClientGrade())) {
+            client.setClientGrade(newGrade);
+            clientRepository.save(client);
+        }
+        return SUCCESS_MESSAGE;
+    }
+
     private void checkByEmail(Client client, String email) {
         if (client == null) {
             throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);

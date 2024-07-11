@@ -17,4 +17,5 @@ public interface ClientGradeRepository extends JpaRepository<ClientGrade, Long> 
      */
     ClientGrade findByClientGradeName(String clientGradeName);
 
+    ClientGrade findFirstByClientPolicyBoundryLessThanEqualOrderByClientPolicyBoundryDesc(long payment);
 }
