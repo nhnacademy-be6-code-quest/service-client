@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -483,5 +482,29 @@ class ClientControllerTest {
                         .headers(headers))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.roles", containsInAnyOrder("1", "2")));
+    }
+
+    @Test
+    void testUpdateClientGrade() throws Exception {
+        ClientUpdateGradeRequestDto clientUpdateGradeRequestDto = new ClientUpdateGradeRequestDto(1L, 1L);
+
+        when(clientService.updateClientGrade(anyLong(), anyLong())).thenReturn("Success");
+
+        mockMvc.perform(put("/api/client/grade")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(clientUpdateGradeRequestDto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testUpdateClientGrade_throwsNotFound() throws Exception {
+        ClientUpdateGradeRequestDto clientUpdateGradeRequestDto = new ClientUpdateGradeRequestDto(1L, 1L);
+
+        when(clientService.updateClientGrade(anyLong(), anyLong())).thenThrow(new NotFoundClientException("Not found"));
+
+        mockMvc.perform(put("/api/client/grade")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clientUpdateGradeRequestDto)))
+                .andExpect(status().isNotFound());
     }
 }

@@ -1,9 +1,6 @@
 package com.nhnacademy.client.service;
 
-import com.nhnacademy.client.dto.request.ClientOAuthRegisterRequestDto;
-import com.nhnacademy.client.dto.request.ClientRegisterAddressRequestDto;
-import com.nhnacademy.client.dto.request.ClientRegisterPhoneNumberRequestDto;
-import com.nhnacademy.client.dto.request.ClientRegisterRequestDto;
+import com.nhnacademy.client.dto.request.*;
 import com.nhnacademy.client.dto.response.*;
 import org.springframework.data.domain.Page;
 
@@ -215,4 +212,14 @@ public interface ClientService {
      * @return 유저정보 페이지
      */
     Page<ClientPrivacyResponseDto> getClientPrivacyPage(int page, int size, String sort, boolean desc);
+
+    /**
+     * 유저의 3개월간 결재 금액을 받아 회원의 등급을 갱신하는 함수입니다.
+     *
+     * @author gihwanJang
+     * @param clientId 유저 식별자
+     * @param payment 결재금액
+     * @return 성공여부 반환
+     */
+    String updateClientGrade(Long clientId, Long payment);
 }
