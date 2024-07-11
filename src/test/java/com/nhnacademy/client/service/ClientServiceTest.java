@@ -8,7 +8,6 @@ import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.entity.*;
 import com.nhnacademy.client.exception.*;
 import com.nhnacademy.client.repository.*;
-import jakarta.ws.rs.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
