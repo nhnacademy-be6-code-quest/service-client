@@ -657,7 +657,7 @@ class ClientServiceTest {
         String result = clientService.updateClientGrade(clientId, payment);
 
         // Then
-        assertThat(result).isEqualTo("success");
+        assertThat(result).isEqualTo("Success");
         verify(clientRepository).save(client);
         assertThat(client.getClientGrade()).isEqualTo(newGrade);
     }
@@ -680,7 +680,7 @@ class ClientServiceTest {
         String result = clientService.updateClientGrade(clientId, payment);
 
         // Then
-        assertThat(result).isEqualTo("success");
+        assertThat(result).isEqualTo("Success");
         verify(clientRepository, never()).save(client);
     }
 
