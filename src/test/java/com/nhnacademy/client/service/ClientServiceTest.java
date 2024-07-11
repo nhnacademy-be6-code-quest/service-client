@@ -18,6 +18,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,11 +26,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class ClientServiceTest {
@@ -595,5 +598,43 @@ class ClientServiceTest {
 
         //Then
         assertThatThrownBy(() -> clientService.getClientGradeRate(id)).isInstanceOf(NotFoundClientException.class);
+    }
+
+    @Test
+    void testGetClientPrivacyPageWithDifferentSortingAndPaging() {
+        // Given
+        int page = 2;
+        int size = 5;
+        String sort = "clientEmail";
+        boolean desc = false;
+
+        ClientGrade grade = new ClientGrade();
+        grade.setClientGradeName("Silver");
+
+        Client client = Client.builder()
+                .clientGrade(grade)
+                .clientName("Test User")
+                .clientEmail("test@example.com")
+                .clientBirth(LocalDate.of(1995, 5, 5))
+                .build();
+
+        List<Client> clients = Arrays.asList(client);
+        Page<Client> clientPage = new PageImpl<>(clients);
+
+        when(clientRepository.findAllLazy(any(PageRequest.class))).thenReturn(clientPage);
+
+        // When
+        Page<ClientPrivacyResponseDto> result = clientService.getClientPrivacyPage(page, size, sort, desc);
+
+        // Then
+        assertEquals(1, result.getContent().size());
+        assertEquals("Silver", result.getContent().get(0).getClientGrade());
+        assertEquals("Test User", result.getContent().get(0).getClientName());
+        assertEquals("test@example.com", result.getContent().get(0).getClientEmail());
+        assertEquals(LocalDate.of(1995, 5, 5), result.getContent().get(0).getClientBirth());
+
+        // Verify that the correct PageRequest was used
+        PageRequest expectedPageRequest = PageRequest.of(1, 5, Sort.by(Sort.Direction.ASC, "clientEmail"));
+        verify(clientRepository).findAllLazy(expectedPageRequest);
     }
 }

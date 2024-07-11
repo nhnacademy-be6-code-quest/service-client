@@ -16,8 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -328,6 +330,19 @@ public class ClientServiceImp implements ClientService {
         Client client = clientRepository.findById(clientId).orElse(null);
         checkById(client, clientId);
         return new ClientGradeRateResponseDto(client.getClientGrade().getRate());
+    }
+
+    @Override
+    public Page<ClientPrivacyResponseDto> getClientPrivacyPage(int page, int size, String sort, boolean desc) {
+        Sort sorting = Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort);
+        PageRequest pageRequest = PageRequest.of(page, size, sorting);
+
+        return clientRepository.findAllLazy(pageRequest).map(i -> ClientPrivacyResponseDto.builder()
+                .clientGrade(i.getClientGrade().getClientGradeName())
+                .clientName(i.getClientName())
+                .clientEmail(i.getClientEmail())
+                .clientBirth(i.getClientBirth())
+                .build());
     }
 
     private void checkByEmail(Client client, String email) {

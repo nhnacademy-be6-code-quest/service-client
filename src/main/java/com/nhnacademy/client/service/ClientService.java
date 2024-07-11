@@ -205,4 +205,14 @@ public interface ClientService {
      * @return 적립률
      */
     ClientGradeRateResponseDto getClientGradeRate(Long clientId);
+
+    /**
+     * page와 size를 받아 유저들의 정보를 반화하는 함수입니다.
+     *
+     * @author gihwanJang
+     * @param page 현재 페이지 입니다.
+     * @param size 페이지에 보여질 컨텐트 수입니다.
+     * @return 유저정보 페이지
+     */
+    Page<ClientPrivacyResponseDto> getClientPrivacyPage(int page, int size, String sort, boolean desc);
 }
