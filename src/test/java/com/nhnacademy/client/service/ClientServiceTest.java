@@ -74,7 +74,7 @@ class ClientServiceTest {
         ClientRegisterRequestDto registerInfo = new ClientRegisterRequestDto("test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), "123-456-7890");
 
         when(clientRepository.findByClientEmail(registerInfo.getClientEmail())).thenReturn(null);
-        when(clientGradeRepository.findByClientGradeName("common")).thenReturn(new ClientGrade(1L, "common", 0, 0));
+        when(clientGradeRepository.findByClientGradeName("common")).thenReturn(new ClientGrade(1L, "common", 0, 0L));
         when(passwordEncoder.encode(registerInfo.getClientPassword())).thenReturn("encodedPassword");
         when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(roleRepository.findByRoleName("ROLE_USER")).thenReturn(new Role(1, "ROLE_USER"));
@@ -133,7 +133,7 @@ class ClientServiceTest {
     void testPrivacy() {
         // Given
         Long id = 1L;
-        Client client = new Client(id, new ClientGrade(1L, "VIP", 0, 0), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(id, new ClientGrade(1L, "VIP", 0, 0L), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         when(clientRepository.findById(id)).thenReturn(Optional.of(client));
 
         // When
@@ -577,14 +577,14 @@ class ClientServiceTest {
         Client client = Client.builder()
                 .clientId(1L)
                 .clientName("tester")
-                .clientGrade(new ClientGrade(1L, "t", 0, 1))
+                .clientGrade(new ClientGrade(1L, "t", 0, 1L))
                 .build();
 
         //When
         when(clientRepository.findById(anyLong())).thenReturn(Optional.of(client));
 
         //Then
-        assertThat(clientService.getClientGradeRate(1L).getRate()).isEqualTo(client.getClientGrade().getRate());
+        assertThat(clientService.getClientGradeRate(1L).getRatePolicyId()).isEqualTo(client.getClientGrade().getPointPolicyId());
     }
 
     @Test
@@ -642,8 +642,8 @@ class ClientServiceTest {
         // Given
         Long clientId = 1L;
         Long payment = 50000L;
-        ClientGrade oldGrade = new ClientGrade(1L, "Standard", 30000, 0);
-        ClientGrade newGrade = new ClientGrade(2L, "Premium", 50000, 0);
+        ClientGrade oldGrade = new ClientGrade(1L, "Standard", 30000, 0L);
+        ClientGrade newGrade = new ClientGrade(2L, "Premium", 50000, 0L);
 
         Client client = new Client();
         client.setClientId(clientId);
@@ -666,7 +666,7 @@ class ClientServiceTest {
         // Given
         Long clientId = 1L;
         Long payment = 20000L;
-        ClientGrade oldGrade = new ClientGrade(1L, "Standard", 30000, 0);
+        ClientGrade oldGrade = new ClientGrade(1L, "Standard", 30000, 0L);
 
         Client client = new Client();
         client.setClientId(clientId);

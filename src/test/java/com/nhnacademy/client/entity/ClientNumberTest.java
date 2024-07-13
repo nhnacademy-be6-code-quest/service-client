@@ -23,7 +23,7 @@ class ClientNumberTest {
     @Test
     void testClientNumberEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -56,7 +56,7 @@ class ClientNumberTest {
     @Test
     void testUpdateClientNumberEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -90,7 +90,7 @@ class ClientNumberTest {
     @Test
     void testDeleteClientNumberEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -124,7 +124,7 @@ class ClientNumberTest {
     @Test
     void testClientNumberConstructorAndGetters() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientNumber clientNumber = new ClientNumber(1L, client, "123-456-7890");
 
@@ -137,7 +137,7 @@ class ClientNumberTest {
     @Test
     void testClientNumberSetters() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientNumber clientNumber = new ClientNumber();
         clientNumber.setClientNumberId(2L);
@@ -153,7 +153,7 @@ class ClientNumberTest {
     @Test
     void testClientNumberEqualsAndHashCode() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email1@example.com", "password1", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientNumber clientNumber1 = new ClientNumber(1L, client, "123-456-7890");
         ClientNumber clientNumber2 = new ClientNumber(1L, client, "123-456-7890");
@@ -169,7 +169,7 @@ class ClientNumberTest {
     @Test
     void testClientNumberToString() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientNumber clientNumber = new ClientNumber(1L, client, "123-456-7890");
 

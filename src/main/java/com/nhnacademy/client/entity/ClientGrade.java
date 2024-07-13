@@ -18,5 +18,5 @@ public class ClientGrade {
     private Long clientGradeId;
     private String clientGradeName;
     private long clientPolicyBoundry;
-    private Integer rate;
+    private Long pointPolicyId;
 }

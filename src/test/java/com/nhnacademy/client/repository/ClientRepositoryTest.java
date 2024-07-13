@@ -28,7 +28,7 @@ class ClientRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        ClientGrade commonGrade = clientGradeRepository.save(new ClientGrade(null, "common", 0, 0));
+        ClientGrade commonGrade = clientGradeRepository.save(new ClientGrade(null, "common", 0, 0L));
         Client client1 = new Client(null, commonGrade, "client1@example.com", "password1", "Client One", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now().minusDays(91), false, null);
         Client client2 = new Client(null, commonGrade, "client2@example.com", "password2", "Client Two", LocalDate.of(1990, 2, 1), LocalDateTime.now(), LocalDateTime.now().minusDays(30), false, null);
         Client client3 = new Client(null, commonGrade, "client3@example.com", "password3", "Client Three", LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1), LocalDateTime.now(), LocalDateTime.now(), false, null);

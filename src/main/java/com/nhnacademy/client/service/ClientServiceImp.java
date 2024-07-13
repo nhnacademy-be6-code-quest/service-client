@@ -1,6 +1,7 @@
 package com.nhnacademy.client.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.client.client.PaymentClient;
 import com.nhnacademy.client.dto.message.ClientLoginMessageDto;
 import com.nhnacademy.client.dto.message.SignUpClientMessageDto;
 import com.nhnacademy.client.dto.request.ClientOAuthRegisterRequestDto;
@@ -37,8 +38,9 @@ public class ClientServiceImp implements ClientService {
     private static final String SUCCESS_MESSAGE = "Success";
 
     private final ObjectMapper objectMapper;
-    private final PasswordEncoder passwordEncoder;
+    private final PaymentClient paymentClient;
     private final RabbitTemplate rabbitTemplate;
+    private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, String> redisTemplate;
 
     private final RoleRepository roleRepository;
@@ -319,7 +321,18 @@ public class ClientServiceImp implements ClientService {
         }
         log.info("success update login");
         client.setLastLoginDate(clientLoginMessageDto.getLastLoginDate());
+        updateClientGradeWithLogin(clientLoginMessageDto.getClientId());
         clientRepository.save(client);
+    }
+
+    private void updateClientGradeWithLogin(Long clientId) {
+        try {
+            Long paymentRecord = paymentClient.getPaymentRecordOfClient(clientId).getPaymentGradeValue();
+            updateClientGrade(clientId, paymentRecord);
+            log.info("success update payment grade {} : {}", clientId, paymentRecord);
+        } catch (Exception e) {
+            log.error("failed to update payment grade {}", clientId, e);
+        }
     }
 
     @Override
@@ -335,7 +348,7 @@ public class ClientServiceImp implements ClientService {
     public ClientGradeRateResponseDto getClientGradeRate(Long clientId) {
         Client client = clientRepository.findById(clientId).orElse(null);
         checkById(client, clientId);
-        return new ClientGradeRateResponseDto(client.getClientGrade().getRate());
+        return new ClientGradeRateResponseDto(client.getClientGrade().getPointPolicyId());
     }
 
     @Override
