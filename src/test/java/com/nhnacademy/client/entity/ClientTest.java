@@ -24,7 +24,7 @@ class ClientTest {
     @Test
     void testClientEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -58,7 +58,7 @@ class ClientTest {
     @Test
     void testUpdateClientEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -96,7 +96,7 @@ class ClientTest {
     @Test
     void testDeleteClientEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -124,7 +124,7 @@ class ClientTest {
     @Test
     void testClientConstructorAndGetters() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
 
         // Then
@@ -143,7 +143,7 @@ class ClientTest {
     @Test
     void testClientSetters() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client();
         client.setClientId(2L);
         client.setClientGrade(clientGrade);
@@ -172,7 +172,7 @@ class ClientTest {
     @Test
     void testClientEqualsAndHashCode() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client1 = new Client(1L, clientGrade, "email1@example.com", "password1", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now().toLocalDate().atStartOfDay(), LocalDateTime.now().toLocalDate().atStartOfDay(), false, null);
         Client client2 = new Client(1L, clientGrade, "email1@example.com", "password1", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now().toLocalDate().atStartOfDay(), LocalDateTime.now().toLocalDate().atStartOfDay(), false, null);
         Client client3 = new Client(2L, clientGrade, "email2@example.com", "password2", "Jane Doe", LocalDate.of(1991, 2, 2), LocalDateTime.now().toLocalDate().atStartOfDay(), LocalDateTime.now().toLocalDate().atStartOfDay(), true, LocalDateTime.now().toLocalDate().atStartOfDay());
@@ -187,7 +187,7 @@ class ClientTest {
     @Test
     void testClientToString() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
 
         // When

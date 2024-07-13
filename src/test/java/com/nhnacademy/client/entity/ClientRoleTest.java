@@ -23,7 +23,7 @@ class ClientRoleTest {
     @Test
     void testClientRoleEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -60,7 +60,7 @@ class ClientRoleTest {
     @Test
     void testUpdateClientRoleEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -102,7 +102,7 @@ class ClientRoleTest {
     @Test
     void testDeleteClientRoleEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -140,7 +140,7 @@ class ClientRoleTest {
     @Test
     void testClientRoleConstructorAndGetters() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         Role role = new Role();
         role.setRoleName("ADMIN");
@@ -156,7 +156,7 @@ class ClientRoleTest {
     @Test
     void testClientRoleSetters() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         Role role1 = new Role();
         role1.setRoleName("ADMIN");
@@ -178,7 +178,7 @@ class ClientRoleTest {
     @Test
     void testClientRoleEqualsAndHashCode() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email1@example.com", "password1", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         Role role = new Role();
         role.setRoleName("ADMIN");
@@ -197,7 +197,7 @@ class ClientRoleTest {
     @Test
     void testClientRoleToString() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         Role role = new Role();
         role.setRoleName("ADMIN");

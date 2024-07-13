@@ -9,25 +9,25 @@ class ClientGradeRateResponseDtoTest {
     void testNoArgsConstructor() {
         ClientGradeRateResponseDto dto = new ClientGradeRateResponseDto();
 
-        assertThat(dto.getRate()).isNull();
+        assertThat(dto.getRatePolicyId()).isNull();
     }
 
     @Test
     void testSettersAndGetters() {
-        Integer rate = 1;
+        Long rate = 1L;
 
         ClientGradeRateResponseDto dto = new ClientGradeRateResponseDto();
-        dto.setRate(rate);
+        dto.setRatePolicyId(rate);
 
-        assertThat(dto.getRate()).isEqualTo(rate);
+        assertThat(dto.getRatePolicyId()).isEqualTo(rate);
     }
 
     @Test
     void testAllArgsConstructor() {
-        Integer rate = 1;
+        Long rate = 1L;
 
         ClientGradeRateResponseDto dto = new ClientGradeRateResponseDto(rate);
 
-        assertThat(dto.getRate()).isEqualTo(rate);
+        assertThat(dto.getRatePolicyId()).isEqualTo(rate);
     }
 }

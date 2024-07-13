@@ -452,13 +452,13 @@ class ClientControllerTest {
 
     @Test
     void testGetClientGradeRate() throws Exception {
-        ClientGradeRateResponseDto clientGradeRateResponseDto = new ClientGradeRateResponseDto(1);
+        ClientGradeRateResponseDto clientGradeRateResponseDto = new ClientGradeRateResponseDto(1L);
 
         when(clientService.getClientGradeRate(anyLong())).thenReturn(clientGradeRateResponseDto);
 
         mockMvc.perform(get("/api/client/grade?clientId=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.rate").value(clientGradeRateResponseDto.getRate()));
+                .andExpect(jsonPath("$.ratePolicyId").value(clientGradeRateResponseDto.getRatePolicyId()));
     }
 
     @Test
@@ -471,8 +471,6 @@ class ClientControllerTest {
 
     @Test
     void testGetClientRole() throws Exception {
-        List<String> list = List.of("1", "2");
-
         HttpHeaders headers = new HttpHeaders();
         headers.add(ID_HEADER, "1");
         headers.add("X-User-Role", "1");

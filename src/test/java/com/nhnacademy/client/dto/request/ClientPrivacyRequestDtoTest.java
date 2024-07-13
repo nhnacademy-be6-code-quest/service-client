@@ -21,7 +21,7 @@ class ClientPrivacyRequestDtoTest {
 
     @BeforeEach
     void setUp() {
-        clientGrade = new ClientGrade(1L, "VIP", 1000L, 10);
+        clientGrade = new ClientGrade(1L, "VIP", 1000L, 10L);
         clientNumbers = List.of(new ClientNumber(1L, null, "123-456-7890"));
         clientPrivacyRequestDto = new ClientPrivacyRequestDto();
         clientPrivacyRequestDto.setClientGrade(clientGrade);
@@ -41,7 +41,7 @@ class ClientPrivacyRequestDtoTest {
         assertThat(clientPrivacyRequestDto.getClientNumbers()).isEqualTo(clientNumbers);
 
         // Test setter
-        ClientGrade newClientGrade = new ClientGrade(2L, "Regular", 500L, 5);
+        ClientGrade newClientGrade = new ClientGrade(2L, "Regular", 500L, 5L);
         String newClientEmail = "new@example.com";
         String newClientName = "Jane Doe";
         LocalDateTime newClientBirth = LocalDateTime.of(1995, 5, 5, 0, 0);

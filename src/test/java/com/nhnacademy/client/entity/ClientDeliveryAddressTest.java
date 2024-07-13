@@ -23,7 +23,7 @@ class ClientDeliveryAddressTest {
     @Test
     void testClientDeliveryAddressEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -62,7 +62,7 @@ class ClientDeliveryAddressTest {
     @Test
     void testUpdateClientDeliveryAddressEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -105,7 +105,7 @@ class ClientDeliveryAddressTest {
     @Test
     void testDeleteClientDeliveryAddressEntity() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20);
+        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
         entityManager.persist(clientGrade);
 
         Client client = Client.builder()
@@ -142,7 +142,7 @@ class ClientDeliveryAddressTest {
     @Test
     void testClientDeliveryAddressConstructorAndGetters() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientDeliveryAddress clientDeliveryAddress = new ClientDeliveryAddress(1L, client, "123 Main St", "Apt 4B", "Home", 12345);
 
@@ -158,7 +158,7 @@ class ClientDeliveryAddressTest {
     @Test
     void testClientDeliveryAddressSetters() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientDeliveryAddress clientDeliveryAddress = new ClientDeliveryAddress();
         clientDeliveryAddress.setClientDeliveryAddressId(2L);
@@ -180,7 +180,7 @@ class ClientDeliveryAddressTest {
     @Test
     void testClientDeliveryAddressEqualsAndHashCode() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email1@example.com", "password1", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientDeliveryAddress clientDeliveryAddress1 = new ClientDeliveryAddress(1L, client, "123 Main St", "Apt 4B", "Home", 12345);
         ClientDeliveryAddress clientDeliveryAddress2 = new ClientDeliveryAddress(1L, client, "123 Main St", "Apt 4B", "Home", 12345);
@@ -196,7 +196,7 @@ class ClientDeliveryAddressTest {
     @Test
     void testClientDeliveryAddressToString() {
         // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15);
+        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
         Client client = new Client(1L, clientGrade, "email@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientDeliveryAddress clientDeliveryAddress = new ClientDeliveryAddress(1L, client, "123 Main St", "Apt 4B", "Home", 12345);
 

@@ -20,8 +20,8 @@ class ClientGradeRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        clientGradeRepository.save(new ClientGrade(1L, "common", 0, 0));
-        clientGradeRepository.save(new ClientGrade(2L, "VIP", 10, 100));
+        clientGradeRepository.save(new ClientGrade(1L, "common", 0, 0L));
+        clientGradeRepository.save(new ClientGrade(2L, "VIP", 10, 100L));
     }
 
     @Test
@@ -31,7 +31,7 @@ class ClientGradeRepositoryTest {
         assertThat(clientGrade).isNotNull();
         assertThat(clientGrade.getClientGradeName()).isEqualTo("common");
         assertThat(clientGrade.getClientPolicyBoundry()).isZero();
-        assertThat(clientGrade.getRate()).isZero();
+        assertThat(clientGrade.getPointPolicyId()).isZero();
     }
 
     @Test
@@ -41,7 +41,7 @@ class ClientGradeRepositoryTest {
         assertThat(clientGrade).isNotNull();
         assertThat(clientGrade.getClientGradeName()).isEqualTo("VIP");
         assertThat(clientGrade.getClientPolicyBoundry()).isEqualTo(10);
-        assertThat(clientGrade.getRate()).isEqualTo(100);
+        assertThat(clientGrade.getPointPolicyId()).isEqualTo(100L);
     }
 
     @Test

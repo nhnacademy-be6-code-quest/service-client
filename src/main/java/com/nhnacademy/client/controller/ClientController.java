@@ -432,13 +432,18 @@ public interface ClientController {
     @PutMapping("/api/client/grade")
     ResponseEntity<String> updateClientGrade(@RequestBody ClientUpdateGradeRequestDto clientUpdateGradeRequestDto);
 
+    @ExceptionHandler(ClientEmailDuplicatesException.class)
     ResponseEntity<ClientRegisterResponseDto> handleException(ClientEmailDuplicatesException e);
 
+    @ExceptionHandler(NotFoundClientException.class)
     ResponseEntity<ClientRegisterResponseDto> handleException(NotFoundClientException e);
 
+    @ExceptionHandler(ClientAuthenticationFailedException.class)
     ResponseEntity<ClientLoginResponseDto> handleException(ClientAuthenticationFailedException e);
 
+    @ExceptionHandler(ClientDeletedException.class)
     ResponseEntity<ClientLoginResponseDto> handleException(ClientDeletedException e);
 
+    @ExceptionHandler(ClientAddressOutOfRangeException.class)
     ResponseEntity<String> handleException(ClientAddressOutOfRangeException e);
 }

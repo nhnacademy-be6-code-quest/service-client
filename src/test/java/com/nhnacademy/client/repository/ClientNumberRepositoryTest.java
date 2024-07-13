@@ -34,7 +34,7 @@ class ClientNumberRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        ClientGrade clientGrade = clientGradeRepository.save(new ClientGrade(1L, "common", 0, 0));
+        ClientGrade clientGrade = clientGradeRepository.save(new ClientGrade(1L, "common", 0, 0L));
 
         client = clientRepository.save(Client.builder()
                 .clientEmail("test@example.com")
