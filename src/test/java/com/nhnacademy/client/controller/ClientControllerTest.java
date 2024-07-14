@@ -323,7 +323,7 @@ class ClientControllerTest {
         ClientRecoveryRequestDto requestDto = new ClientRecoveryRequestDto(
                 "test@example.com", "token123");
 
-        when(clientService.recveryClinet(any(String.class), any(String.class)))
+        when(clientService.recoveryClient(any(String.class), any(String.class)))
                 .thenReturn("Success");
 
         mockMvc.perform(put("/api/client/recovery-account")
@@ -337,7 +337,7 @@ class ClientControllerTest {
     void testRecoveryOauthClient() throws Exception {
         String email = "test@example.com";
 
-        when(clientService.recveryOauthClinet(any(String.class)))
+        when(clientService.recoveryOauthClient(any(String.class)))
                 .thenReturn("Success");
 
         mockMvc.perform(put("/api/client/recovery-oauth-account")

@@ -4,7 +4,6 @@ import com.nhnacademy.client.dto.request.*;
 import com.nhnacademy.client.dto.response.*;
 import com.nhnacademy.client.exception.*;
 import com.nhnacademy.client.service.ClientService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -120,7 +119,7 @@ public class ClientControllerImp implements ClientController {
     @Override
     public ResponseEntity<String> recoveryClient(ClientRecoveryRequestDto clientRecoveryRequestDto) {
         log.info("recovery client : {}", clientRecoveryRequestDto);
-        return ResponseEntity.ok(clientService.recveryClinet(
+        return ResponseEntity.ok(clientService.recoveryClient(
                 clientRecoveryRequestDto.getEmail(),
                 clientRecoveryRequestDto.getToken()
         ));
@@ -129,7 +128,7 @@ public class ClientControllerImp implements ClientController {
     @Override
     public ResponseEntity<String> recoveryOauthClient(String email) {
         log.info("recovery client : {}", email);
-        return ResponseEntity.ok(clientService.recveryOauthClinet(email));
+        return ResponseEntity.ok(clientService.recoveryOauthClient(email));
     }
 
     @Override

@@ -277,7 +277,7 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
-    public String recveryClinet(String email, String token) {
+    public String recoveryClient(String email, String token) {
         Client client = clientRepository.findByClientEmail(email);
         if (client == null) {
             throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);
@@ -290,7 +290,7 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
-    public String recveryOauthClinet(String email) {
+    public String recoveryOauthClient(String email) {
         Client client = clientRepository.findByClientEmail(email);
         if (client == null) {
             throw new NotFoundClientException(NOT_FOUND_MESSAGE + email);
@@ -323,6 +323,12 @@ public class ClientServiceImp implements ClientService {
         client.setLastLoginDate(clientLoginMessageDto.getLastLoginDate());
         updateClientGradeWithLogin(clientLoginMessageDto.getClientId());
         clientRepository.save(client);
+    }
+
+    @Override
+    @RabbitListener(queues = "${rabbit.login.dlq.queue.name}")
+    public void receiveDeadMessage(String message) {
+        log.info("consume dead message: {}", message);
     }
 
     private void updateClientGradeWithLogin(Long clientId) {
