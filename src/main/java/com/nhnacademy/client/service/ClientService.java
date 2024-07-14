@@ -21,7 +21,7 @@ public interface ClientService {
      * Oauth 회원 정보를 받아 회원가입을 수행하는 함수입니다.
      *
      * @author gihwanJang
-     * @param clientOAuthRegisterRequestDto
+     * @param clientOAuthRegisterRequestDto Oauth 회원의 가입 시 입력된 정보입니다.
      * @return 성공 여부를 반환합니다.
      */
     String oauthRegister(ClientOAuthRegisterRequestDto clientOAuthRegisterRequestDto);
@@ -147,7 +147,7 @@ public interface ClientService {
      * @param token 요청 검증 값입니다.
      * @return 성공시 "Success" 실패시 NotFoundClient, BadRequest 예외
      */
-    String recveryClinet(String email, String token);
+    String recoveryClient(String email, String token);
 
     /**
      * 이메일을 인자로 받아 휴면 계정을 복구하는 api입니다.
@@ -156,7 +156,7 @@ public interface ClientService {
      * @param email 유저를 식별하는 인자입니다.
      * @return 성공시 "Success" 실패시 NotFoundClient 예외
      */
-    String recveryOauthClinet(String email);
+    String recoveryOauthClient(String email);
 
     /**
      * 이메일과 비밀번호를 인자로 받아 비밀번호를 변경하는 api 함수입니다.
@@ -184,6 +184,14 @@ public interface ClientService {
      * @param message 유저의 id와 로그인 시간입니다.
      */
     void receiveMessage(String message);
+
+    /**
+     * 로그인 시간 업데이트 시 실패한 메시지 처리 함수입니다.
+     *
+     * @author gihwanJang
+     * @param message 유저의 id와 로그인 시간입니다.
+     */
+    void receiveDeadMessage(String message);
 
     /**
      * 유저 id를 받아 유저 이름을 반환하는 함수입니다.

@@ -491,7 +491,7 @@ class ClientServiceTest {
         when(redisTemplate.opsForHash().get("recovery-account", token)).thenReturn("valid");
 
         // When
-        String response = clientService.recveryClinet(email, token);
+        String response = clientService.recoveryClient(email, token);
 
         // Then
         assertThat(response).isEqualTo("Success");
@@ -509,7 +509,7 @@ class ClientServiceTest {
         when(redisTemplate.opsForHash().get("recovery-account", token)).thenReturn(null);
 
         // When & Then
-        assertThatThrownBy(() -> clientService.recveryClinet(email, token))
+        assertThatThrownBy(() -> clientService.recoveryClient(email, token))
                 .isInstanceOf(ClientAuthenticationFailedException.class);
     }
 
@@ -522,7 +522,7 @@ class ClientServiceTest {
         when(clientRepository.findByClientEmail(email)).thenReturn(client);
 
         // When
-        String response = clientService.recveryOauthClinet(email);
+        String response = clientService.recoveryOauthClient(email);
 
         // Then
         assertThat(response).isEqualTo("Success");
