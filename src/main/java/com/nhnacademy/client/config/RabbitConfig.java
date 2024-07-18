@@ -1,9 +1,8 @@
 package com.nhnacademy.client.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -16,6 +15,11 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
     private static final String DEAD_LETTER_EXCHANGE = "x-dead-letter-exchange";
     private static final String DEAD_LETTER_ROUTING_KEY = "x-dead-letter-routing-key";
+
+    private final String rabbitHost;
+    private final int rabbitPort;
+    private final String rabbitUsername;
+    private final String rabbitPassword;
 
     @Value("${rabbit.login.exchange.name}")
     private String loginExchangeName;
@@ -46,76 +50,77 @@ public class RabbitConfig {
     @Value("${rabbit.point.dlq.routing.key}")
     private String registerPointDlqRoutingKey;
 
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(rabbitHost, rabbitPort);
+        connectionFactory.setUsername(rabbitUsername);
+        connectionFactory.setPassword(rabbitPassword);
+        return connectionFactory;
+    }
+
 
     @Bean
-    DirectExchange loginExchange() {
+    public DirectExchange loginExchange() {
         return new DirectExchange(loginExchangeName);
     }
     @Bean
-    Queue loginDlqQueue() {
+    public Queue loginDlqQueue() {
         return new Queue(loginDlqQueueName);
     }
     @Bean
-    Binding loginDlqBinding(Queue loginDlqQueue, DirectExchange loginExchange) {
+    public Binding loginDlqBinding(Queue loginDlqQueue, DirectExchange loginExchange) {
         return BindingBuilder.bind(loginDlqQueue).to(loginExchange).with(loginDlqRoutingKey);
     }
     @Bean
-    Queue loginQueue() {
+    public Queue loginQueue() {
         return QueueBuilder.durable(loginQueueName)
                 .withArgument(DEAD_LETTER_EXCHANGE, loginExchangeName)
                 .withArgument(DEAD_LETTER_ROUTING_KEY, loginDlqRoutingKey)
                 .build();
     }
     @Bean
-    Binding loginBinding(Queue loginQueue, DirectExchange loginExchange) {
+    public Binding loginBinding(Queue loginQueue, DirectExchange loginExchange) {
         return BindingBuilder.bind(loginQueue).to(loginExchange).with(loginRoutingKey);
     }
 
 
     @Bean
-    DirectExchange registerExchange() {
+    public DirectExchange registerExchange() {
         return new DirectExchange(registerExchangeName);
     }
     @Bean
-    Queue registerQueue() {
+    public Queue registerQueue() {
         return QueueBuilder.durable(registerQueueName)
                 .withArgument(DEAD_LETTER_EXCHANGE, registerExchangeName)
                 .withArgument(DEAD_LETTER_ROUTING_KEY, registerDlqRoutingKey)
                 .build();
     }
     @Bean
-    Binding registerBinding(Queue registerQueue, DirectExchange registerExchange) {
+    public Binding registerBinding(Queue registerQueue, DirectExchange registerExchange) {
         return BindingBuilder.bind(registerQueue).to(registerExchange).with(registerRoutingKey);
     }
 
 
     @Bean
-    DirectExchange registerPointExchange() {
+    public DirectExchange registerPointExchange() {
         return new DirectExchange(registerPointExchangeName);
     }
     @Bean
-    Queue registerPointQueue() {
+    public Queue registerPointQueue() {
         return QueueBuilder.durable(registerPointQueueName)
                 .withArgument(DEAD_LETTER_EXCHANGE, registerPointExchangeName)
                 .withArgument(DEAD_LETTER_ROUTING_KEY, registerPointDlqRoutingKey)
                 .build();
     }
     @Bean
-    Binding registerPointBinding(Queue registerPointQueue, DirectExchange registerPointExchange) {
+    public Binding registerPointBinding(Queue registerPointQueue, DirectExchange registerPointExchange) {
         return BindingBuilder.bind(registerPointQueue).to(registerPointExchange).with(registerPointRoutingKey);
     }
 
     @Bean
-    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         return rabbitTemplate;
-    }
-
-    @Bean
-    ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        return objectMapper;
     }
 }

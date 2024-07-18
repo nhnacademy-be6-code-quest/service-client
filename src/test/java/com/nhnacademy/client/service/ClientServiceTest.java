@@ -95,7 +95,7 @@ class ClientServiceTest {
         // Given
         ClientRegisterRequestDto registerInfo = new ClientRegisterRequestDto("test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), "123-456-7890");
 
-        when(clientRepository.findByClientEmail(registerInfo.getClientEmail())).thenReturn(new Client());
+        when(clientRepository.findByClientEmail(registerInfo.getClientEmail())).thenReturn(Client.builder().build());
 
         // When & Then
         assertThatThrownBy(() -> clientService.register(registerInfo))
@@ -106,7 +106,7 @@ class ClientServiceTest {
     void testLogin() {
         // Given
         String email = "test@example.com";
-        Client client = new Client(1L, new ClientGrade(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(1L, ClientGrade.builder().build(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         when(clientRepository.findByClientEmail(email)).thenReturn(client);
         when(clientRoleRepository.findRolesByClient(client)).thenReturn(List.of(new Role(1, "ROLE_USER")));
 
@@ -160,7 +160,7 @@ class ClientServiceTest {
         // Given
         int page = 0;
         int size = 10;
-        Client client = new Client(1L, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(1L, ClientGrade.builder().build(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         Page<Client> clientPage = new PageImpl<>(List.of(client));
         when(clientRepository.findAll(any(PageRequest.class))).thenReturn(clientPage);
 
@@ -176,7 +176,7 @@ class ClientServiceTest {
     void testDeliveryAddress() {
         // Given
         Long id = 1L;
-        Client client = new Client(id, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(id, ClientGrade.builder().build(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientDeliveryAddress address = new ClientDeliveryAddress(1L, client, "123 Main St", "Apt 4B", "Home", 12345);
         when(clientRepository.findById(id)).thenReturn(Optional.of(client));
         when(clientDeliveryAddressRepository.findAllByClient(client)).thenReturn(List.of(address));
@@ -203,7 +203,7 @@ class ClientServiceTest {
     void testGetPhoneNumbers() {
         // Given
         Long id = 1L;
-        Client client = new Client(id, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(id, ClientGrade.builder().build(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientNumber phoneNumber = new ClientNumber(1L, client, "123-456-7890");
         when(clientRepository.findById(id)).thenReturn(Optional.of(client));
         when(clientNumberRepository.findAllByClient(client)).thenReturn(List.of(phoneNumber));
@@ -230,7 +230,7 @@ class ClientServiceTest {
     void testOrder() {
         // Given
         Long id = 1L;
-        Client client = new Client(id, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(id, ClientGrade.builder().build(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         ClientNumber phoneNumber = new ClientNumber(1L, client, "123-456-7890");
         ClientDeliveryAddress address = new ClientDeliveryAddress(1L, client, "123 Main St", "Apt 4B", "Home", 12345);
         when(clientRepository.findById(id)).thenReturn(Optional.of(client));
@@ -261,7 +261,7 @@ class ClientServiceTest {
         // Given
         Long id = 1L;
         ClientRegisterAddressRequestDto requestDto = new ClientRegisterAddressRequestDto("123 Main St", "Apt 4B", "Home", 12345);
-        Client client = new Client(id, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(id, ClientGrade.builder().build(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         when(clientRepository.findById(id)).thenReturn(Optional.of(client));
 
         // When
@@ -289,7 +289,7 @@ class ClientServiceTest {
         // Given
         Long id = 1L;
         ClientRegisterPhoneNumberRequestDto requestDto = new ClientRegisterPhoneNumberRequestDto("123-456-7890");
-        Client client = new Client(id, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(id, ClientGrade.builder().build(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         when(clientRepository.findById(id)).thenReturn(Optional.of(client));
 
         // When
@@ -343,7 +343,7 @@ class ClientServiceTest {
         // Given
         Long id = 1L;
         String password = "password";
-        Client client = new Client(id, new ClientGrade(), "test@example.com", password, "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(id, ClientGrade.builder().build(), "test@example.com", password, "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         when(clientRepository.findById(id)).thenReturn(Optional.of(client));
         when(passwordEncoder.matches(password, client.getClientPassword())).thenReturn(true);
 
@@ -373,7 +373,7 @@ class ClientServiceTest {
         // Given
         Long id = 1L;
         String password = "password";
-        Client client = new Client(id, new ClientGrade(), "test@example.com", "wrongPassword", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(id, ClientGrade.builder().build(), "test@example.com", "wrongPassword", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         when(clientRepository.findById(id)).thenReturn(Optional.of(client));
         when(passwordEncoder.matches(password, client.getClientPassword())).thenReturn(false);
 
@@ -388,7 +388,7 @@ class ClientServiceTest {
         Long id = 1L;
         String name = "Jane Doe";
         LocalDate birth = LocalDate.of(1991, 2, 2);
-        Client client = new Client(id, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(id, ClientGrade.builder().build(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
         when(clientRepository.findById(id)).thenReturn(Optional.of(client));
 
         // When
@@ -419,7 +419,7 @@ class ClientServiceTest {
         // Given
         String message = "{\"clientId\":1,\"lastLoginDate\":\"2023-06-28T12:34:56\"}";
         ClientLoginMessageDto messageDto = new ClientLoginMessageDto(1L, LocalDateTime.of(2023, 6, 28, 12, 34, 56));
-        Client client = new Client(1L, new ClientGrade(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(1L, ClientGrade.builder().build(), "test@example.com", "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
 
         when(objectMapper.readValue(message, ClientLoginMessageDto.class)).thenReturn(messageDto);
         when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
@@ -452,7 +452,7 @@ class ClientServiceTest {
         String email = "test@example.com";
         String newPassword = "newPassword123";
         String token = "validToken";
-        Client client = new Client(1L, new ClientGrade(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
+        Client client = new Client(1L, ClientGrade.builder().build(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), false, null);
 
         when(clientRepository.findByClientEmail(email)).thenReturn(client);
         when(redisTemplate.opsForHash().get("change-password", token)).thenReturn("valid");
@@ -472,7 +472,7 @@ class ClientServiceTest {
         String newPassword = "newPassword123";
         String token = "invalidToken";
 
-        when(clientRepository.findByClientEmail(email)).thenReturn(new Client());
+        when(clientRepository.findByClientEmail(email)).thenReturn(Client.builder().build());
         when(hashOperations.get("change-password", token)).thenReturn(null);
 
         // When & Then
@@ -485,7 +485,7 @@ class ClientServiceTest {
         // Given
         String email = "test@example.com";
         String token = "validToken";
-        Client client = new Client(1L, new ClientGrade(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), true, null);
+        Client client = new Client(1L, ClientGrade.builder().build(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), true, null);
 
         when(clientRepository.findByClientEmail(email)).thenReturn(client);
         when(redisTemplate.opsForHash().get("recovery-account", token)).thenReturn("valid");
@@ -505,7 +505,7 @@ class ClientServiceTest {
         String email = "test@example.com";
         String token = "invalidToken";
 
-        when(clientRepository.findByClientEmail(email)).thenReturn(new Client());
+        when(clientRepository.findByClientEmail(email)).thenReturn(Client.builder().build());
         when(redisTemplate.opsForHash().get("recovery-account", token)).thenReturn(null);
 
         // When & Then
@@ -517,7 +517,7 @@ class ClientServiceTest {
     void testRecveryOauthClinet() {
         // Given
         String email = "test@example.com";
-        Client client = new Client(1L, new ClientGrade(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), true, null);
+        Client client = new Client(1L, ClientGrade.builder().build(), email, "password", "John Doe", LocalDate.of(1990, 1, 1), LocalDateTime.now(), LocalDateTime.now(), true, null);
 
         when(clientRepository.findByClientEmail(email)).thenReturn(client);
 
@@ -607,7 +607,7 @@ class ClientServiceTest {
         String sort = "clientEmail";
         boolean desc = false;
 
-        ClientGrade grade = new ClientGrade();
+        ClientGrade grade = ClientGrade.builder().build();
         grade.setClientGradeName("Silver");
 
         Client client = Client.builder()
@@ -645,7 +645,7 @@ class ClientServiceTest {
         ClientGrade oldGrade = new ClientGrade(1L, "Standard", 30000, 0L);
         ClientGrade newGrade = new ClientGrade(2L, "Premium", 50000, 0L);
 
-        Client client = new Client();
+        Client client = Client.builder().build();
         client.setClientId(clientId);
         client.setClientGrade(oldGrade);
 
@@ -668,7 +668,7 @@ class ClientServiceTest {
         Long payment = 20000L;
         ClientGrade oldGrade = new ClientGrade(1L, "Standard", 30000, 0L);
 
-        Client client = new Client();
+        Client client = Client.builder().build();
         client.setClientId(clientId);
         client.setClientGrade(oldGrade);
 
