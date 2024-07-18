@@ -189,18 +189,8 @@ public class ClientControllerImp implements ClientController {
         return ResponseEntity.status(HttpStatus.GONE).build();
     }
 
-    public void totalLogic() {
-        // 적립함수
-        doSomethingElse();
-    }
-
     @Override
     public ResponseEntity<String> handleException(ClientAddressOutOfRangeException e) {
-        doSomethingElse();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
-
-    private void doSomethingElse() {
-
     }
 }
