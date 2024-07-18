@@ -1,67 +1,106 @@
 package com.nhnacademy.client.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@Import({RabbitConfigTest.TestConfig.class, RabbitConfig.class})
 class RabbitConfigTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public ConnectionFactory connectionFactory() {
-            return new CachingConnectionFactory("localhost");
-        }
+    private RabbitConfig rabbitConfig;
+
+    @BeforeEach
+    void setUp() {
+        rabbitConfig = new RabbitConfig("localhost", 5672, "guest", "guest");
+
+        ReflectionTestUtils.setField(rabbitConfig, "loginExchangeName", "login.exchange");
+        ReflectionTestUtils.setField(rabbitConfig, "loginQueueName", "login.queue");
+        ReflectionTestUtils.setField(rabbitConfig, "loginRoutingKey", "login.routing.key");
+        ReflectionTestUtils.setField(rabbitConfig, "loginDlqQueueName", "login.dlq.queue");
+        ReflectionTestUtils.setField(rabbitConfig, "loginDlqRoutingKey", "login.dlq.routing.key");
+
+        ReflectionTestUtils.setField(rabbitConfig, "registerExchangeName", "register.exchange");
+        ReflectionTestUtils.setField(rabbitConfig, "registerQueueName", "register.queue");
+        ReflectionTestUtils.setField(rabbitConfig, "registerRoutingKey", "register.routing.key");
+        ReflectionTestUtils.setField(rabbitConfig, "registerDlqRoutingKey", "register.dlq.routing.key");
+
+        ReflectionTestUtils.setField(rabbitConfig, "registerPointExchangeName", "register.point.exchange");
+        ReflectionTestUtils.setField(rabbitConfig, "registerPointQueueName", "register.point.queue");
+        ReflectionTestUtils.setField(rabbitConfig, "registerPointRoutingKey", "register.point.routing.key");
+        ReflectionTestUtils.setField(rabbitConfig, "registerPointDlqRoutingKey", "register.point.dlq.routing.key");
     }
 
-    @Autowired
-    private ApplicationContext context;
+    @Test
+    void testConnectionFactory() {
+        ConnectionFactory connectionFactory = rabbitConfig.connectionFactory();
+        assertNotNull(connectionFactory);
+    }
 
     @Test
     void testLoginExchange() {
-        DirectExchange loginExchange = context.getBean("loginExchange", DirectExchange.class);
-        assertThat(loginExchange).isNotNull();
-        assertThat(loginExchange.getName()).isEqualTo("code-quest.client.login.exchange");
+        DirectExchange exchange = rabbitConfig.loginExchange();
+        assertNotNull(exchange);
+        assertEquals("login.exchange", exchange.getName());
+    }
+
+    @Test
+    void testLoginDlqQueue() {
+        Queue queue = rabbitConfig.loginDlqQueue();
+        assertNotNull(queue);
+        assertEquals("login.dlq.queue", queue.getName());
     }
 
     @Test
     void testLoginQueue() {
-        Queue loginQueue = context.getBean("loginQueue", Queue.class);
-        assertThat(loginQueue).isNotNull();
-        assertThat(loginQueue.getName()).isEqualTo("code-quest.client.login.queue");
+        Queue queue = rabbitConfig.loginQueue();
+        assertNotNull(queue);
+        assertEquals("login.queue", queue.getName());
+        assertEquals("login.exchange", queue.getArguments().get("x-dead-letter-exchange"));
+        assertEquals("login.dlq.routing.key", queue.getArguments().get("x-dead-letter-routing-key"));
     }
 
     @Test
-    void testLoginBinding() {
-        Binding loginBinding = context.getBean("loginBinding", Binding.class);
-        assertThat(loginBinding).isNotNull();
-        assertThat(loginBinding.getRoutingKey()).isEqualTo("code-quest.client.login.key");
+    void testRegisterExchange() {
+        DirectExchange exchange = rabbitConfig.registerExchange();
+        assertNotNull(exchange);
+        assertEquals("register.exchange", exchange.getName());
+    }
+
+    @Test
+    void testRegisterQueue() {
+        Queue queue = rabbitConfig.registerQueue();
+        assertNotNull(queue);
+        assertEquals("register.queue", queue.getName());
+        assertEquals("register.exchange", queue.getArguments().get("x-dead-letter-exchange"));
+        assertEquals("register.dlq.routing.key", queue.getArguments().get("x-dead-letter-routing-key"));
+    }
+
+    @Test
+    void testRegisterPointExchange() {
+        DirectExchange exchange = rabbitConfig.registerPointExchange();
+        assertNotNull(exchange);
+        assertEquals("register.point.exchange", exchange.getName());
+    }
+
+    @Test
+    void testRegisterPointQueue() {
+        Queue queue = rabbitConfig.registerPointQueue();
+        assertNotNull(queue);
+        assertEquals("register.point.queue", queue.getName());
+        assertEquals("register.point.exchange", queue.getArguments().get("x-dead-letter-exchange"));
+        assertEquals("register.point.dlq.routing.key", queue.getArguments().get("x-dead-letter-routing-key"));
     }
 
     @Test
     void testRabbitTemplate() {
-        RabbitTemplate rabbitTemplate = context.getBean("rabbitTemplate", RabbitTemplate.class);
-        assertThat(rabbitTemplate).isNotNull();
-        assertThat(rabbitTemplate.getMessageConverter()).isInstanceOf(Jackson2JsonMessageConverter.class);
-    }
-
-    @Test
-    void testObjectMapper() {
-        ObjectMapper objectMapper = context.getBean("objectMapper", ObjectMapper.class);
-        assertThat(objectMapper).isNotNull();
+        ConnectionFactory connectionFactory = rabbitConfig.connectionFactory();
+        RabbitTemplate rabbitTemplate = rabbitConfig.rabbitTemplate(connectionFactory);
+        assertNotNull(rabbitTemplate);
+        assertTrue(rabbitTemplate.getMessageConverter() instanceof Jackson2JsonMessageConverter);
     }
 }

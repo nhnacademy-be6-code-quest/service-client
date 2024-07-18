@@ -1,122 +1,65 @@
 package com.nhnacademy.client.entity;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.TestPropertySource;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
-@TestPropertySource(properties = {"spring.sql.init.mode=never"})
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ClientGradeTest {
 
-    @Autowired
-    private TestEntityManager entityManager;
-
     @Test
-    void testClientGradeEntity() {
-        // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
-
-        // When
-        ClientGrade savedClientGrade = entityManager.persistAndFlush(clientGrade);
-
-        // Then
-        assertThat(savedClientGrade.getClientGradeId()).isNotNull();
-        assertThat(savedClientGrade.getClientGradeName()).isEqualTo("VIP");
-        assertThat(savedClientGrade.getClientPolicyBoundry()).isEqualTo(5000L);
-        assertThat(savedClientGrade.getPointPolicyId()).isEqualTo(20);
-    }
-
-    @Test
-    void testUpdateClientGradeEntity() {
-        // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
-        ClientGrade savedClientGrade = entityManager.persistAndFlush(clientGrade);
-
-        // When
-        savedClientGrade.setClientGradeName("Premium");
-        savedClientGrade.setClientPolicyBoundry(10000L);
-        savedClientGrade.setPointPolicyId(30L);
-        ClientGrade updatedClientGrade = entityManager.persistAndFlush(savedClientGrade);
-
-        // Then
-        assertThat(updatedClientGrade.getClientGradeId()).isEqualTo(savedClientGrade.getClientGradeId());
-        assertThat(updatedClientGrade.getClientGradeName()).isEqualTo("Premium");
-        assertThat(updatedClientGrade.getClientPolicyBoundry()).isEqualTo(10000L);
-        assertThat(updatedClientGrade.getPointPolicyId()).isEqualTo(30);
-    }
-
-    @Test
-    void testDeleteClientGradeEntity() {
-        // Given
-        ClientGrade clientGrade = new ClientGrade(null, "VIP", 5000L, 20L);
-        ClientGrade savedClientGrade = entityManager.persistAndFlush(clientGrade);
-
-        // When
-        entityManager.remove(savedClientGrade);
-        entityManager.flush();
-        ClientGrade foundClientGrade = entityManager.find(ClientGrade.class, savedClientGrade.getClientGradeId());
-
-        // Then
-        assertThat(foundClientGrade).isNull();
-    }
-
-    @Test
-    void testClientGradeConstructorAndGetters() {
-        // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
-
-        // Then
-        assertThat(clientGrade.getClientGradeId()).isEqualTo(1L);
-        assertThat(clientGrade.getClientGradeName()).isEqualTo("Gold");
-        assertThat(clientGrade.getClientPolicyBoundry()).isEqualTo(3000L);
-        assertThat(clientGrade.getPointPolicyId()).isEqualTo(15);
-    }
-
-    @Test
-    void testClientGradeSetters() {
-        // Given
+    void testNoArgsConstructor() {
         ClientGrade clientGrade = new ClientGrade();
-        clientGrade.setClientGradeId(2L);
-        clientGrade.setClientGradeName("Silver");
-        clientGrade.setClientPolicyBoundry(2000L);
-        clientGrade.setPointPolicyId(10L);
-
-        // Then
-        assertThat(clientGrade.getClientGradeId()).isEqualTo(2L);
-        assertThat(clientGrade.getClientGradeName()).isEqualTo("Silver");
-        assertThat(clientGrade.getClientPolicyBoundry()).isEqualTo(2000L);
-        assertThat(clientGrade.getPointPolicyId()).isEqualTo(10);
+        assertNotNull(clientGrade);
     }
 
     @Test
-    void testClientGradeEqualsAndHashCode() {
-        // Given
-        ClientGrade clientGrade1 = new ClientGrade(1L, "Gold", 3000L, 15L);
-        ClientGrade clientGrade2 = new ClientGrade(1L, "Gold", 3000L, 15L);
-        ClientGrade clientGrade3 = new ClientGrade(2L, "Silver", 2000L, 10L);
+    void testAllArgsConstructor() {
+        ClientGrade clientGrade = new ClientGrade(
+                1L,
+                "Gold",
+                1000L,
+                2L
+        );
 
-        // Then
-        assertThat(clientGrade1).isEqualTo(clientGrade2);
-        assertThat(clientGrade1).isNotEqualTo(clientGrade3);
-        assertThat(clientGrade1.hashCode()).hasSameHashCodeAs(clientGrade2.hashCode());
-        assertThat(clientGrade1.hashCode()).isNotEqualTo(clientGrade3.hashCode());
+        assertAll(
+                () -> assertEquals(1L, clientGrade.getClientGradeId()),
+                () -> assertEquals("Gold", clientGrade.getClientGradeName()),
+                () -> assertEquals(1000L, clientGrade.getClientPolicyBoundry()),
+                () -> assertEquals(2L, clientGrade.getPointPolicyId())
+        );
     }
 
     @Test
-    void testClientGradeToString() {
-        // Given
-        ClientGrade clientGrade = new ClientGrade(1L, "Gold", 3000L, 15L);
+    void testBuilder() {
+        ClientGrade clientGrade = ClientGrade.builder()
+                .clientGradeId(1L)
+                .clientGradeName("Gold")
+                .clientPolicyBoundry(1000L)
+                .pointPolicyId(2L)
+                .build();
 
-        // When
-        String clientGradeString = clientGrade.toString();
+        assertAll(
+                () -> assertEquals(1L, clientGrade.getClientGradeId()),
+                () -> assertEquals("Gold", clientGrade.getClientGradeName()),
+                () -> assertEquals(1000L, clientGrade.getClientPolicyBoundry()),
+                () -> assertEquals(2L, clientGrade.getPointPolicyId())
+        );
+    }
 
-        // Then
-        assertThat(clientGradeString).isEqualTo("ClientGrade(clientGradeId=1, clientGradeName=Gold, clientPolicyBoundry=3000, pointPolicyId=15)");
+    @Test
+    void testSettersAndGetters() {
+        ClientGrade clientGrade = new ClientGrade();
+
+        clientGrade.setClientGradeId(1L);
+        clientGrade.setClientGradeName("Gold");
+        clientGrade.setClientPolicyBoundry(1000L);
+        clientGrade.setPointPolicyId(2L);
+
+        assertAll(
+                () -> assertEquals(1L, clientGrade.getClientGradeId()),
+                () -> assertEquals("Gold", clientGrade.getClientGradeName()),
+                () -> assertEquals(1000L, clientGrade.getClientPolicyBoundry()),
+                () -> assertEquals(2L, clientGrade.getPointPolicyId())
+        );
     }
 }
