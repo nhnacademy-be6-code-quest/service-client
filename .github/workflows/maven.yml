@@ -10,9 +10,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
   build:
@@ -30,8 +30,8 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-#    - name: Run SonarQube
-#      run: mvn sonar:sonar -Dsonar.projectKey=code-quest-client -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.login=${{secrets.SONAR_TOKEN}}
+    - name: Run SonarQube
+      run: mvn sonar:sonar -Dsonar.projectKey=code-quest-client -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.login=${{secrets.SONAR_TOKEN}}
 
     - name: upload file
       uses: appleboy/scp-action@master
@@ -52,4 +52,4 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script_stop: true
-        script: "./startup.sh"
+        script: "./client_startup.sh"

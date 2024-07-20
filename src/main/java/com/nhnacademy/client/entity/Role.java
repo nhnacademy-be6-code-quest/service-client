@@ -1,32 +1,20 @@
 package com.nhnacademy.client.entity;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nhnacademy.client.exception.UnknownRoleException;
-import jakarta.persistence.*;
-import lombok.Getter;
-import org.springframework.security.core.GrantedAuthority;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.*;
 
-public enum Role implements GrantedAuthority {
-    ROLE_ADMIN, ROLE_USER, NON_USER;
-
-    private static final String prefix = "ROLE_";
-
-    @JsonCreator
-    public static Role jsonCreator(String role) {
-        role = role.toUpperCase();
-        if (!role.startsWith(prefix)) {
-            role = prefix + role;
-        }
-        for (Role status : Role.values()) {
-            if (status.toString().equals(role)) {
-                return status;
-            }
-        }
-        throw new UnknownRoleException("Invalid role: " + role);
-    }
-
-    @Override
-    public String getAuthority() {
-        return this.toString();
-    }
+@Getter
+@Setter
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Role{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer roleId;
+    private String roleName;
 }

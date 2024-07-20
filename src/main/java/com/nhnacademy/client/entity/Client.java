@@ -6,25 +6,25 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long client_id;
+    private Long clientId;
     @ManyToOne
     @JoinColumn(name = "clientGradeId")
     private ClientGrade clientGrade;
     private String clientEmail;
     private String clientPassword;
     private String clientName;
-    private LocalDateTime clientBirth;
+    private LocalDate clientBirth;
     private LocalDateTime clientCreatedAt;
     private LocalDateTime lastLoginDate;
     private boolean isDeleted;
-    @Column(name = "client_role_id")
-    private Role role;
+    private LocalDateTime clientDeleteDate;
 }

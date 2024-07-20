@@ -1,10 +1,9 @@
-POST localhost:8001/client
-Content-Type: application/json
+### 쿠폰
+GET localhost:8003/api/client/coupon-payment?page=0&size=5
+X-User-Id:1
+X-User-Role:ROLE_ADMIN
 
-{
-  "clientEmail" : "test@email.com",
-  "clientPassword" : "qwer1234@",
-  "clientName" : "tester",
-  "clientBirth" : "2024-06-16T00:00:00",
-  "clientPhoneNumber" : "01066666808"
-}
+### 주문
+GET localhost:8003/api/client/order
+email: test@email.com
+role: ROLE_USER
