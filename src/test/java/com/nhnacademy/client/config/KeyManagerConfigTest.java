@@ -1,7 +1,6 @@
 package com.nhnacademy.client.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.client.client.KeyManagerClient;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,123 +43,59 @@ class KeyManagerConfigTest {
     }
 
     @Test
-    void testRedisHost() {
-        String expectedKey = "test-redis-host";
-        when(keyManagerClient.getRedisHost(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
+    void testRedisKey() {
+        when(keyManagerClient.getRedisHost(any(HttpHeaders.class))).thenReturn(createMockResponse("test-redis-host"));
+        when(keyManagerClient.getRedisPassword(any(HttpHeaders.class))).thenReturn(createMockResponse("test-redis-password"));
+        when(keyManagerClient.getRedisPort(any(HttpHeaders.class))).thenReturn(createMockResponse("6379"));
+        when(keyManagerClient.getRedisDb(any(HttpHeaders.class))).thenReturn(createMockResponse("0"));
 
-        String redisHost = keyManagerConfig.redisHost();
-        assertEquals(expectedKey, redisHost);
+        Map<String, String> redisKey = keyManagerConfig.redisKey();
+
+        assertEquals("test-redis-host", redisKey.get("host"));
+        assertEquals("test-redis-password", redisKey.get("password"));
+        assertEquals("6379", redisKey.get("port"));
+        assertEquals("0", redisKey.get("db"));
 
         verify(keyManagerClient, times(1)).getRedisHost(any(HttpHeaders.class));
-    }
-
-    @Test
-    void testRedisPassword() {
-        String expectedKey = "test-redis-password";
-        when(keyManagerClient.getRedisPassword(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
-
-        String redisPassword = keyManagerConfig.redisPassword();
-        assertEquals(expectedKey, redisPassword);
-
         verify(keyManagerClient, times(1)).getRedisPassword(any(HttpHeaders.class));
-    }
-
-    @Test
-    void testRedisPort() {
-        String expectedKey = "6379";
-        when(keyManagerClient.getRedisPort(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
-
-        Integer redisPort = keyManagerConfig.redisPort();
-        assertEquals(Integer.valueOf(expectedKey), redisPort);
-
         verify(keyManagerClient, times(1)).getRedisPort(any(HttpHeaders.class));
-    }
-
-    @Test
-    void testRedisDb() {
-        String expectedKey = "0";
-        when(keyManagerClient.getRedisDb(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
-
-        Integer redisDb = keyManagerConfig.redisDb();
-        assertEquals(Integer.valueOf(expectedKey), redisDb);
-
         verify(keyManagerClient, times(1)).getRedisDb(any(HttpHeaders.class));
     }
 
     @Test
-    void testRabbitHost() {
-        String expectedKey = "test-rabbit-host";
-        when(keyManagerClient.getRabbitmqHost(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
+    void testRabbitKey() {
+        when(keyManagerClient.getRabbitmqHost(any(HttpHeaders.class))).thenReturn(createMockResponse("test-rabbit-host"));
+        when(keyManagerClient.getRabbitmqPassword(any(HttpHeaders.class))).thenReturn(createMockResponse("test-rabbit-password"));
+        when(keyManagerClient.getRabbitmqUsername(any(HttpHeaders.class))).thenReturn(createMockResponse("test-rabbit-username"));
+        when(keyManagerClient.getRabbitmqPort(any(HttpHeaders.class))).thenReturn(createMockResponse("5672"));
 
-        String rabbitHost = keyManagerConfig.rabbitHost();
-        assertEquals(expectedKey, rabbitHost);
+        Map<String, String> rabbitKey = keyManagerConfig.rabbitKey();
+
+        assertEquals("test-rabbit-host", rabbitKey.get("host"));
+        assertEquals("test-rabbit-password", rabbitKey.get("password"));
+        assertEquals("test-rabbit-username", rabbitKey.get("username"));
+        assertEquals("5672", rabbitKey.get("port"));
 
         verify(keyManagerClient, times(1)).getRabbitmqHost(any(HttpHeaders.class));
-    }
-
-    @Test
-    void testRabbitPassword() {
-        String expectedKey = "test-rabbit-password";
-        when(keyManagerClient.getRabbitmqPassword(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
-
-        String rabbitPassword = keyManagerConfig.rabbitPassword();
-        assertEquals(expectedKey, rabbitPassword);
-
         verify(keyManagerClient, times(1)).getRabbitmqPassword(any(HttpHeaders.class));
-    }
-
-    @Test
-    void testRabbitUsername() {
-        String expectedKey = "test-rabbit-username";
-        when(keyManagerClient.getRabbitmqUsername(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
-
-        String rabbitUsername = keyManagerConfig.rabbitUsername();
-        assertEquals(expectedKey, rabbitUsername);
-
         verify(keyManagerClient, times(1)).getRabbitmqUsername(any(HttpHeaders.class));
-    }
-
-    @Test
-    void testRabbitPort() {
-        String expectedKey = "5672";
-        when(keyManagerClient.getRabbitmqPort(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
-
-        Integer rabbitPort = keyManagerConfig.rabbitPort();
-        assertEquals(Integer.valueOf(expectedKey), rabbitPort);
-
         verify(keyManagerClient, times(1)).getRabbitmqPort(any(HttpHeaders.class));
     }
 
     @Test
-    void testMysqlUrl() {
-        String expectedKey = "jdbc:mysql://localhost:3306/testdb";
-        when(keyManagerClient.getMysqlUrl(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
+    void testMysqlKey() {
+        when(keyManagerClient.getMysqlUrl(any(HttpHeaders.class))).thenReturn(createMockResponse("jdbc:mysql://localhost:3306/testdb"));
+        when(keyManagerClient.getMysqlPassword(any(HttpHeaders.class))).thenReturn(createMockResponse("test-mysql-password"));
+        when(keyManagerClient.getMysqlUsername(any(HttpHeaders.class))).thenReturn(createMockResponse("test-mysql-username"));
 
-        String mysqlUrl = keyManagerConfig.mysqlUrl();
-        assertEquals(expectedKey, mysqlUrl);
+        Map<String, String> mysqlKey = keyManagerConfig.mysqlKey();
+
+        assertEquals("jdbc:mysql://localhost:3306/testdb", mysqlKey.get("url"));
+        assertEquals("test-mysql-password", mysqlKey.get("password"));
+        assertEquals("test-mysql-username", mysqlKey.get("username"));
 
         verify(keyManagerClient, times(1)).getMysqlUrl(any(HttpHeaders.class));
-    }
-
-    @Test
-    void testMysqlPassword() {
-        String expectedKey = "test-mysql-password";
-        when(keyManagerClient.getMysqlPassword(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
-
-        String mysqlPassword = keyManagerConfig.mysqlPassword();
-        assertEquals(expectedKey, mysqlPassword);
-
         verify(keyManagerClient, times(1)).getMysqlPassword(any(HttpHeaders.class));
-    }
-
-    @Test
-    void testMysqlUsername() {
-        String expectedKey = "test-mysql-username";
-        when(keyManagerClient.getMysqlUsername(any(HttpHeaders.class))).thenReturn(createMockResponse(expectedKey));
-
-        String mysqlUsername = keyManagerConfig.mysqlUsername();
-        assertEquals(expectedKey, mysqlUsername);
-
         verify(keyManagerClient, times(1)).getMysqlUsername(any(HttpHeaders.class));
     }
 

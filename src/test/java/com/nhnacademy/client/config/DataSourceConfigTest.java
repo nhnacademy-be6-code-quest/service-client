@@ -7,6 +7,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.sql.DataSource;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DataSourceConfigTest {
@@ -15,10 +17,10 @@ class DataSourceConfigTest {
 
     @BeforeEach
     void setUp() {
-        dataSourceConfig = new DataSourceConfig(
-                "jdbc:mysql://localhost:3306/testdb",
-                "testuser",
-                "testpassword"
+        dataSourceConfig = new DataSourceConfig(Map.of(
+                "url", "jdbc:mysql://localhost:3306/testdb",
+                "username", "testuser",
+                "password", "testpassword")
         );
 
         ReflectionTestUtils.setField(dataSourceConfig, "driverClassName", "com.mysql.cj.jdbc.Driver");

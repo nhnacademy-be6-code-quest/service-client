@@ -17,87 +17,58 @@ import java.util.Map;
 @Configuration
 @RequiredArgsConstructor
 public class KeyManagerConfig {
+    private static final String PASSWORD = "password";
+
     private final KeyManagerClient keyManagerClient;
+
     @Value("${user.access.key.id}")
     private String accessKeyId;
     @Value("${secret.access.key}")
     private String accessKeySecret;
 
     @Bean
-    public String redisHost() {
+    public Map<String, String> redisKey() {
         String redisHost = getKey(keyManagerClient.getRedisHost(getAccessHeaders()));
         log.info("Redis Host Key: {}", redisHost);
-        return redisHost;
-    }
-
-    @Bean
-    public String redisPassword() {
         String redisPassword = getKey(keyManagerClient.getRedisPassword(getAccessHeaders()));
         log.info("Redis Password Key: {}", redisPassword);
-        return redisPassword;
-    }
-
-    @Bean
-    public Integer redisPort() {
         String redisPort = getKey(keyManagerClient.getRedisPort(getAccessHeaders()));
         log.info("Redis Port Key: {}", redisPort);
-        return Integer.parseInt(redisPort);
-    }
-
-    @Bean
-    public Integer redisDb() {
         String redisDb = getKey(keyManagerClient.getRedisDb(getAccessHeaders()));
         log.info("Redis Db Key: {}", redisDb);
-        return Integer.parseInt(redisDb);
+        return Map.of("host", redisHost,
+                PASSWORD, redisPassword,
+                "port", redisPort,
+                "db", redisDb);
     }
 
     @Bean
-    public String rabbitHost() {
+    public Map<String, String> rabbitKey() {
         String rabbitmqHost = getKey(keyManagerClient.getRabbitmqHost(getAccessHeaders()));
         log.info("Rabbitmq Host Key: {}", rabbitmqHost);
-        return rabbitmqHost;
-    }
-
-    @Bean
-    public String rabbitPassword() {
         String rabbitmqPassword = getKey(keyManagerClient.getRabbitmqPassword(getAccessHeaders()));
         log.info("Rabbitmq Password Key: {}", rabbitmqPassword);
-        return rabbitmqPassword;
-    }
-
-    @Bean
-    public String rabbitUsername() {
         String rabbitmqUsername = getKey(keyManagerClient.getRabbitmqUsername(getAccessHeaders()));
         log.info("Rabbitmq Username: {}", rabbitmqUsername);
-        return rabbitmqUsername;
-    }
-
-    @Bean
-    public Integer rabbitPort() {
         String rabbitmqPort = getKey(keyManagerClient.getRabbitmqPort(getAccessHeaders()));
         log.info("Rabbitmq Port Key: {}", rabbitmqPort);
-        return Integer.parseInt(rabbitmqPort);
+        return Map.of("host", rabbitmqHost,
+                PASSWORD, rabbitmqPassword,
+                "username", rabbitmqUsername,
+                "port", rabbitmqPort);
     }
 
     @Bean
-    public String mysqlUrl() {
+    public Map<String, String> mysqlKey() {
         String mysqlUrl = getKey(keyManagerClient.getMysqlUrl(getAccessHeaders()));
         log.info("Mysql Url Key: {}", mysqlUrl);
-        return mysqlUrl;
-    }
-
-    @Bean
-    public String mysqlPassword() {
         String mysqlPassword = getKey(keyManagerClient.getMysqlPassword(getAccessHeaders()));
         log.info("Mysql Password Key: {}", mysqlPassword);
-        return mysqlPassword;
-    }
-
-    @Bean
-    public String mysqlUsername() {
         String mysqlUsername = getKey(keyManagerClient.getMysqlUsername(getAccessHeaders()));
         log.info("Mysql Username: {}", mysqlUsername);
-        return mysqlUsername;
+        return Map.of("url", mysqlUrl,
+                PASSWORD, mysqlPassword,
+                "username", mysqlUsername);
     }
 
     @Bean

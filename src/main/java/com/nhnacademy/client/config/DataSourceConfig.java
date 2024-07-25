@@ -7,13 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
 public class DataSourceConfig {
-    private final String mysqlUrl;
-    private final String mysqlUsername;
-    private final String mysqlPassword;
+    private final Map<String, String> mysqlKey;
     @Value("${datasource.driver-class-name}")
     private String driverClassName;
     @Value("${datasource.test-on-borrow}")
@@ -34,9 +33,9 @@ public class DataSourceConfig {
     @Bean
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setUrl(mysqlUrl);
-        dataSource.setUsername(mysqlUsername);
-        dataSource.setPassword(mysqlPassword);
+        dataSource.setUrl(mysqlKey.get("url"));
+        dataSource.setUsername(mysqlKey.get("username"));
+        dataSource.setPassword(mysqlKey.get("password"));
         dataSource.setDriverClassName(driverClassName);
         dataSource.setTestOnBorrow(testOnBorrow);
         dataSource.setValidationQuery(validationQuery);
@@ -45,7 +44,6 @@ public class DataSourceConfig {
         dataSource.setMaxTotal(maxTotal);
         dataSource.setMinIdle(minIdle);
         dataSource.setMaxOpenPreparedStatements(maxOpenPreparedStatements);
-
         return dataSource;
     }
 }
