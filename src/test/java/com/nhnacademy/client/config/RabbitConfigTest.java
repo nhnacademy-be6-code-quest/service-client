@@ -8,6 +8,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RabbitConfigTest {
@@ -16,7 +18,12 @@ class RabbitConfigTest {
 
     @BeforeEach
     void setUp() {
-        rabbitConfig = new RabbitConfig("localhost", 5672, "guest", "guest");
+        rabbitConfig = new RabbitConfig(Map.of(
+                "host", "localhost",
+                "port", "5672",
+                "username", "guest",
+                "password", "guest")
+        );
 
         ReflectionTestUtils.setField(rabbitConfig, "loginExchangeName", "login.exchange");
         ReflectionTestUtils.setField(rabbitConfig, "loginQueueName", "login.queue");

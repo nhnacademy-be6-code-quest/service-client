@@ -9,6 +9,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RedisTemplateConfigTest {
@@ -17,7 +19,11 @@ class RedisTemplateConfigTest {
 
     @BeforeEach
     void setUp() {
-        redisTemplateConfig = new RedisTemplateConfig("localhost", 6379, "password", 0);
+        redisTemplateConfig = new RedisTemplateConfig(Map.of(
+                "host","localhost",
+                "port", "6379",
+                "password", "password",
+                "db", "0"));
     }
 
     @Test
