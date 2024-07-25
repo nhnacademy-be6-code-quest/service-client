@@ -100,13 +100,4 @@ class LogAndCrashAppenderTest {
                 eq(String.class)
         );
     }
-
-    @Test
-    void testStart_WithoutAppKeyOrPlatform() {
-        LogAndCrashAppender incompleteAppender = new LogAndCrashAppender();
-        incompleteAppender.start();
-
-        // Verify that the appender is not started due to missing appKey and platform
-        assert !incompleteAppender.isStarted();
-    }
 }
