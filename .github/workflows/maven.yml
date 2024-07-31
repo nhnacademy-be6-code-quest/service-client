@@ -52,4 +52,4 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script_stop: true
-        script: "./client_startup_v2.sh"
+        script: "./CD/main.sh 8003 10003 Client-0.0.1-SNAPSHOT.jar"
