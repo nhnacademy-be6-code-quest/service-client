@@ -52,4 +52,4 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script_stop: true
-        script: "./client_startup.sh"
+        script: "./client_startup_v2.sh"

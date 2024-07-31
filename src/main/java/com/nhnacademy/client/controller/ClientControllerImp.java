@@ -194,3 +194,19 @@ public class ClientControllerImp implements ClientController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }
+
+//{
+//        "header": {
+//        "isSuccessful": true,
+//        "resultCode": 0,
+//        "resultMessage": ""
+//        },
+//        "result": [{
+//        "id": "{id}",                                           /* Dooray Member Id */
+//        "name": "{name}",                                       /* 사용자 이름 */
+//        "userCode": "",                                         /* 사용자 ID */
+//        "externalEmailAddress": "{extenralEmailAddress}"        /* 외부 이메일 주소 */
+//
+//        }],
+//        "totalCount": 1                                             /* 필터 조건에 맞는 전체 아이템 수 */
+//}
